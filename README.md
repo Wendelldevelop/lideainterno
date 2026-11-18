@@ -18,3 +18,9 @@ Os leads ficam salvos no navegador de quem usa (localStorage). Use o backup em O
 ## Deploy
 
 Site estático, sem build. Na Vercel: **Add New → Project**, importe este repositório e clique em **Deploy**.
+
+## Acesso
+
+O site pede usuário e senha antes de abrir (arquivo `middleware.js`, roda na Vercel).
+Para trocar o acesso sem mexer no código, crie na Vercel (Settings → Environment Variables)
+as variáveis `AUTH_USER` e `AUTH_PASS` e faça um novo deploy.

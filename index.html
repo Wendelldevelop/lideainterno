@@ -45,6 +45,8 @@ p{margin:0}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
 .tabs button{border:0;background:transparent;padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:700}
 .tabs button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
+.tabs .logout{padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:600;font-size:14px;text-decoration:none;border:1px solid var(--line)}
+.tabs .logout:hover{color:var(--fg)}
 
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px}
 @media (max-width:520px){.card{padding:16px}}
@@ -118,17 +120,39 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .stepper button[aria-current="step"]{border-top-color:var(--accent);color:var(--accent)}
 .step{display:flex;flex-direction:column;gap:16px}
 .step-intro{display:flex;flex-direction:column;gap:4px}
-.crit{display:flex;flex-direction:column;gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
-.crit:last-child{border-bottom:0;padding-bottom:0}
-.crit-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-.pts{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
-.verdict{background:var(--tone-soft);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center}
-.verdict .score{grid-row:span 3;font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--tone);line-height:1;font-variant-numeric:tabular-nums}
-.verdict .score small{font-size:.9rem;color:var(--muted);font-weight:500}
-.verdict b{color:var(--tone);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+/* qualificação */
+.qual{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;align-items:start}
+@media (max-width:760px){.qual{grid-template-columns:1fr}}
+.qlist{display:flex;flex-direction:column;gap:10px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s}
+.q.answered{border-color:var(--lvc)}
+.q-top{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center}
+.q-n{width:28px;height:28px;border-radius:50%;background:var(--track);color:var(--muted);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:12px}
+.q.answered .q-n{background:var(--lvc);color:var(--on-accent)}
+.q-t{font-weight:700;font-size:15px;line-height:1.35}
+.q-pts{font-size:12px;font-weight:700;color:var(--muted);background:var(--bg);border-radius:999px;padding:3px 9px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.q.answered .q-pts{color:var(--lvc)}
+.seg.lv button{background:var(--bg);border-color:transparent;position:relative}
+.seg.lv button::before{content:"";display:block;height:4px;border-radius:999px;background:var(--lvc);opacity:.35;margin:0 auto 8px;width:calc(25% + var(--i) * 25%)}
+.seg.lv button[aria-pressed="true"]{background:var(--lvc);border-color:var(--lvc);color:var(--on-accent)}
+.seg.lv button[aria-pressed="true"]::before{background:var(--on-accent);opacity:.6}
+.seg.lv button:hover:not([aria-pressed="true"]){border-color:var(--line)}
+.verdict{position:sticky;top:84px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+@media (max-width:760px){.verdict{position:static}}
+.verdict .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ring{--p:0;width:132px;height:132px;border-radius:50%;background:conic-gradient(var(--tone) calc(var(--p) * 1%),var(--track) 0);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.ring>span{width:104px;height:104px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.ring b{font-family:var(--f-display);font-size:2.3rem;color:var(--tone);font-variant-numeric:tabular-nums}
+.ring small{font-size:12px;color:var(--muted);margin-top:4px}
+.tier-pill{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--tone);background:var(--tone-soft);padding:4px 12px;border-radius:999px}
 .verdict p{font-size:14px}
-.warn{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.prog{width:100%;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+.prog-bar{height:6px;background:var(--track);border-radius:999px;overflow:hidden}
+.prog-bar span{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .2s}
+.warn{margin:0;padding:10px 12px 10px 28px;font-size:13px;color:var(--fg);background:var(--mid-soft);border-radius:10px;text-align:left;width:100%}
 .warn:empty{display:none}
+.tone-none{--tone:var(--muted);--tone-soft:var(--track)}
+@media (prefers-reduced-motion:reduce){.q,.ring,.prog-bar span{transition:none}}
 .pain{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface);display:flex;flex-direction:column;gap:14px}
 .pain-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tag{font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:999px}
@@ -175,6 +199,7 @@ details.adv[open] summary{margin-bottom:14px}
       <button data-view="leads">Leads</button>
       <button data-view="editor" id="tab-editor">+ Novo lead</button>
       <button data-view="opcoes">Opções</button>
+      <a class="logout" href="/logout">Sair</a>
     </nav>
   </div>
 </div>
@@ -217,12 +242,16 @@ details.adv[open] summary{margin-bottom:14px}
 
   <section class="step" data-step="1" hidden>
     <div class="step-intro"><h2>Vale a pena investir neste lead?</h2><p class="muted">Marque o que vocês ouviram na reunião. A nota diz quanta energia comercial colocar.</p></div>
-    <div class="card" id="criteria"></div>
-    <div class="verdict">
-      <span class="score"><span id="score">0</span><small>/100</small></span>
-      <b id="tier"></b>
-      <p id="tier-text"></p>
-      <ul class="warn" id="warn"></ul>
+    <div class="qual">
+      <div class="qlist" id="criteria"></div>
+      <aside class="verdict" aria-live="polite">
+        <span class="k">Nota do lead</span>
+        <div class="ring" id="ring"><span><b id="score">–</b><small>de 100</small></span></div>
+        <span class="tier-pill" id="tier"></span>
+        <p id="tier-text"></p>
+        <div class="prog"><div class="prog-bar"><span id="prog-bar"></span></div><span id="prog"></span></div>
+        <ul class="warn" id="warn"></ul>
+      </aside>
     </div>
     <div class="nav"><button data-prev>← Voltar</button><button class="primary" data-next>Próximo: dores do cliente →</button></div>
   </section>
@@ -345,6 +374,7 @@ const OPEN=["novo","qualificado","proposta","negociacao"];
 const stageOf=id=>STAGES.find(s=>s.id===id)||STAGES[0];
 const LOST_REASONS=[{id:"preco",n:"Preço"},{id:"prazo",n:"Prazo"},{id:"concorrente",n:"Escolheu concorrente"},{id:"sem-resposta",n:"Parou de responder"},{id:"desistiu",n:"Desistiu do projeto"},{id:"outro",n:"Outro motivo"}];
 const LEVELS=[0,.4,.7,1];
+const LV_COLORS=["--low","--mid","--accent","--high"];
 const CRITERIA=[
   {id:"need",name:"O cliente tem um problema real que a Stack resolve?",max:25,opts:["Não","Vago","Sim, claro","Claro e custa caro"]},
   {id:"budget",name:"Tem dinheiro para investir?",max:20,opts:["Não","Não sabemos","Tem verba","Verba aprovada"]},
@@ -585,11 +615,13 @@ function renderStageSegs(){
 }
 function renderCriteria(){
   $("criteria").innerHTML="";
-  CRITERIA.forEach(c=>{
-    const el=document.createElement("div");el.className="crit";
-    el.innerHTML=`<div class="crit-top"><span class="field">${c.name}</span><span class="pts" id="pts-${c.id}"></span></div><div class="seg"></div>`;
+  CRITERIA.forEach((c,ci)=>{
+    const el=document.createElement("div");el.className="q";el.id="q-"+c.id;
+    el.innerHTML=`<div class="q-top"><span class="q-n">${ci+1}</span><span class="q-t">${c.name}</span><span class="q-pts" id="pts-${c.id}"></span></div><div class="seg lv"></div>`;
     $("criteria").appendChild(el);
-    seg(el.querySelector(".seg"),c.opts.map((n,i)=>({id:i,n})),level[c.id],v=>{level[c.id]=v;update();});
+    const s=el.querySelector(".seg");
+    seg(s,c.opts.map((n,i)=>({id:i,n})),level[c.id],v=>{level[c.id]=v;update();});
+    s.querySelectorAll("button").forEach((b,i)=>{b.style.setProperty("--i",i);b.style.setProperty("--lvc",`var(${LV_COLORS[i]})`);});
   });
 }
 function renderPains(){
@@ -629,11 +661,21 @@ function draft(){
 function update(){
   const d=draft(),q=computeLead(d);
   // scoring
-  const weak=[];CRITERIA.forEach(c=>{$("pts-"+c.id).textContent=`${ptsOf(level,c)} de ${c.max} pts`;if(level[c.id]!=null&&level[c.id]<=1)weak.push(c);});
-  const t=tierOf(d.score);
+  const weak=[];let answered=0;
+  CRITERIA.forEach(c=>{
+    const l=level[c.id],q=$("q-"+c.id);
+    if(l!=null){answered++;q.classList.add("answered");q.style.setProperty("--lvc",`var(${LV_COLORS[l]})`);$("pts-"+c.id).textContent=`+${ptsOf(level,c)} pts`;if(l<=1)weak.push(c);}
+    else{q.classList.remove("answered");$("pts-"+c.id).textContent=`vale até ${c.max}`;}
+  });
+  const t=tierOf(d.score),none=!answered;
+  document.body.classList.toggle("tone-none",none);
   document.body.style.setProperty("--tone",`var(--${t.key})`);document.body.style.setProperty("--tone-soft",`var(--${t.key}-soft)`);
-  $("score").textContent=d.score;$("tier").textContent=t.n;$("tier-text").textContent=t.t;
-  $("warn").innerHTML=weak.map(c=>`<li>Ponto fraco: ${esc(c.name.toLowerCase())}</li>`).join("");
+  $("score").textContent=none?"–":d.score;$("ring").style.setProperty("--p",d.score);
+  $("tier").textContent=none?"Sem nota ainda":t.n;
+  $("tier-text").textContent=none?"Responda as perguntas ao lado. A nota sobe a cada resposta.":t.t;
+  $("prog").textContent=answered===CRITERIA.length?"Todas as perguntas respondidas":`${answered} de ${CRITERIA.length} perguntas respondidas`;
+  $("prog-bar").style.width=(answered/CRITERIA.length*100)+"%";
+  $("warn").innerHTML=weak.map(c=>`<li>Atenção: ${esc(c.name.replace(/\?$/,"").toLowerCase())}</li>`).join("");
   // dores
   rows.forEach((r,i)=>{const c=$("calc-"+i);if(!c)return;const h=rowHours(r),w=h?Math.max(.5,Math.ceil(h/Math.max(num("cap"),1)*2)/2):0;
     $("auto-"+i).textContent=Math.round(baseH(r));
@@ -651,7 +693,7 @@ function update(){
     :'<li class="muted">Nenhuma entrega ainda. Adicione as dores no passo 3.</li>';
   $("prop").textContent=d.text;
   $("rates-note").textContent=`Valor-hora usado: ${Object.keys(ROLE_NAMES).map(k=>`${ROLE_NAMES[k]} ${brl(rates[k])}`).join(" · ")}.`;
-  $("b-score").textContent=`${d.score}/100`;$("b-total").textContent=brl(q.total);$("b-weeks").textContent=wk(q.weeks);
+  $("b-score").textContent=none?"–":`${d.score}/100`;$("b-total").textContent=brl(q.total);$("b-weeks").textContent=wk(q.weeks);
 }
 $("copy").addEventListener("click",()=>copy($("prop").textContent));
 $("save").addEventListener("click",()=>{

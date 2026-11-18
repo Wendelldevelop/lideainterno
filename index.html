@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<style>html{color-scheme:light}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Lead Scoring Stack</title>
+<title>Stack Comercial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
-/* Layout: guided 4-step flow, one step visible at a time, with a sticky summary bar at the bottom */
+/* Layout: top nav (Leads · Novo lead · Opções); Leads = funil + lista de cards; editor = 4 passos com barra fixa */
 :root{
   --bg:#f5f6f9; --surface:#ffffff; --line:#e3e6ee; --track:#eceef4;
   --fg:#161a26; --muted:#5d6478; --accent:#3346d3; --accent-soft:#e7eafc; --on-accent:#ffffff;
@@ -17,67 +16,112 @@
   --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
   --f-body:"Manrope",ui-sans-serif,system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+@media (prefers-color-scheme: dark){:root{
   --bg:#0f1118; --surface:#171a24; --line:#2a2e3e; --track:#232736;
   --fg:#e9ebf3; --muted:#9aa1b6; --accent:#8b98ff; --accent-soft:#232a52; --on-accent:#0f1118;
   --low:#f07c7c; --low-soft:#3a1d22; --mid:#e6b45c; --mid-soft:#3a2d17;
   --high:#6fcf95; --high-soft:#163225; --top:#8b98ff; --top-soft:#232a52; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f1118; --surface:#171a24; --line:#2a2e3e; --track:#232736;
-  --fg:#e9ebf3; --muted:#9aa1b6; --accent:#8b98ff; --accent-soft:#232a52; --on-accent:#0f1118;
-  --low:#f07c7c; --low-soft:#3a1d22; --mid:#e6b45c; --mid-soft:#3a2d17;
-  --high:#6fcf95; --high-soft:#163225; --top:#8b98ff; --top-soft:#232a52; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 0}
-.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
-header{display:flex;flex-direction:column;gap:4px}
-.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
-h1{font-family:var(--f-display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
-h2{font-family:var(--f-display);font-size:1.3rem;margin:0;text-wrap:balance}
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 0}
+.wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:20px;padding-block:20px 32px}
+h1{font-family:var(--f-display);font-size:1.1rem;font-weight:700;margin:0;letter-spacing:-.01em}
+h2{font-family:var(--f-display);font-size:1.35rem;margin:0;text-wrap:balance}
 h3{font-family:var(--f-display);font-size:1.05rem;font-weight:600;margin:0}
 p{margin:0}
 .muted{color:var(--muted)}
 .small{font-size:13px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
 
-/* stepper */
-.stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
-.stepper button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:transparent;border:0;border-top:3px solid var(--track);border-radius:0;padding:8px 2px 0;color:var(--muted);cursor:pointer;font:inherit}
-.stepper .n{font-family:var(--f-mono);font-size:12px}
-.stepper .l{font-size:13px;font-weight:700;line-height:1.25}
-.stepper button.done{border-top-color:var(--accent);color:var(--fg)}
-.stepper button[aria-current="step"]{border-top-color:var(--accent);color:var(--accent)}
-.stepper button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-@media (max-width:480px){.stepper .l{font-size:11.5px}}
+/* top nav */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:12px max(16px,env(safe-area-inset-left,0px));padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.top-in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:14px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{border:0;background:transparent;padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:700}
+.tabs button[aria-current="page"]{background:var(--accent-soft);color:var(--accent)}
 
-.step{display:flex;flex-direction:column;gap:16px}
-[hidden]{display:none!important}
-.step-intro{display:flex;flex-direction:column;gap:4px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px}
 @media (max-width:520px){.card{padding:16px}}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:560px){.grid2{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700;min-width:0}
 .field .help{font-weight:500;font-size:13px;color:var(--muted)}
-input[type=text],input[type=number],select,textarea{font:inherit;font-size:15px;font-weight:500;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+input[type=text],input[type=search],input[type=number],select,textarea{font:inherit;font-size:15px;font-weight:500;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
 textarea{resize:vertical;min-height:52px}
 input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+button{font:inherit;font-weight:600;font-size:14px;border-radius:999px;padding:10px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button.ghost{border-style:dashed;color:var(--accent);border-color:var(--accent);background:transparent;padding:14px}
+button.link{border:0;background:none;padding:6px 8px;color:var(--muted);font-size:13px}
+button.won{background:var(--high-soft);border-color:transparent;color:var(--high)}
+button.lost{background:var(--low-soft);border-color:transparent;color:var(--low)}
+button.danger{color:var(--low)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions button{flex:1 1 180px}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;z-index:50;max-width:calc(100% - 32px);text-align:center}
 
 /* segmented choices */
 .seg{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:6px}
 @media (max-width:560px){.seg{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.seg button{font:inherit;font-size:13.5px;font-weight:600;line-height:1.25;padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;text-align:center;min-height:44px}
+.seg button{font-size:13.5px;line-height:1.25;padding:10px 8px;border-radius:10px;background:var(--bg);text-align:center;min-height:44px}
 .seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .seg button small{display:block;font-weight:500;font-size:12px;opacity:.8;margin-top:2px}
 
-/* criteria */
+/* ---------- LEADS ---------- */
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{border-radius:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .k{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-family:var(--f-display);font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi .s{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kpi.won .v{color:var(--high)} .kpi.lost .v{color:var(--low)} .kpi.open .v{color:var(--accent)}
+.funnel{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.funnel button{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surface)}
+.funnel button .c{font-family:var(--f-mono);font-size:12px;background:var(--track);border-radius:999px;padding:1px 7px}
+.funnel button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.funnel button[aria-pressed="true"] .c{background:rgba(127,127,127,.35)}
+.list{display:flex;flex-direction:column;gap:10px}
+.lc{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--sc);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.lc-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.lc-top b{font-size:16px;overflow-wrap:anywhere}
+.lc .meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;background:var(--sb);color:var(--sc)}
+.move{display:flex;gap:8px;flex-wrap:wrap}
+.move button{padding:8px 14px;font-size:13.5px}
+.lc-foot{display:flex;gap:4px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.lc-foot select{width:auto;font-size:13px;padding:6px 8px;margin-left:auto}
+.reason{display:flex;flex-direction:column;gap:8px;background:var(--low-soft);border-radius:10px;padding:12px}
+.reason .seg button{background:var(--surface)}
+.note-lost{font-size:13px;color:var(--low)}
+.hist{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px}
+.hist li{position:relative}
+.hist li::before{content:"";position:absolute;left:-19px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.empty{text-align:center;padding:32px 16px;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
+
+/* ---------- EDITOR ---------- */
+.stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
+.stepper button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:transparent;border:0;border-top:3px solid var(--track);border-radius:0;padding:8px 2px 0;color:var(--muted)}
+.stepper .n{font-family:var(--f-mono);font-size:12px}
+.stepper .l{font-size:13px;font-weight:700;line-height:1.25}
+.stepper button.done{border-top-color:var(--accent);color:var(--fg)}
+.stepper button[aria-current="step"]{border-top-color:var(--accent);color:var(--accent)}
+.step{display:flex;flex-direction:column;gap:16px}
+.step-intro{display:flex;flex-direction:column;gap:4px}
 .crit{display:flex;flex-direction:column;gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .crit:last-child{border-bottom:0;padding-bottom:0}
 .crit-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pts{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
-
 .verdict{background:var(--tone-soft);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center}
 .verdict .score{grid-row:span 3;font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--tone);line-height:1;font-variant-numeric:tabular-nums}
 .verdict .score small{font-size:.9rem;color:var(--muted);font-weight:500}
@@ -85,30 +129,22 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .verdict p{font-size:14px}
 .warn{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
 .warn:empty{display:none}
-
-/* dores */
 .pain{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface);display:flex;flex-direction:column;gap:14px}
 .pain-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tag{font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:999px}
 .calc{display:flex;flex-wrap:wrap;gap:6px 18px;background:var(--bg);border-radius:10px;padding:10px 14px;font-size:14px}
 .calc span{color:var(--muted)}
-.calc b{font-variant-numeric:tabular-nums}
+.calc b{color:var(--fg);font-variant-numeric:tabular-nums}
 details.mini summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:600}
 details.mini[open] summary{margin-bottom:8px}
-
-/* proposta */
-.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-@media (max-width:600px){.kpis{grid-template-columns:1fr}}
-.kpi{border-radius:12px;padding:14px 16px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
-.kpi.main{background:var(--accent-soft);border-color:transparent}
-.kpi .k{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
-.kpi .v{font-family:var(--f-display);font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.kpi.main .v{color:var(--accent)}
-.kpi .s{font-size:13px;color:var(--muted)}
+.qk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.qk{grid-template-columns:1fr}}
+.qk .kpi.main{background:var(--accent-soft);border-color:transparent}
+.qk .kpi.main .v{color:var(--accent)}
 .phases{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .ph{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 12px;align-items:start}
 .ph .num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;grid-row:span 2}
-.ph .what{font-weight:700;font-size:15px}
+.ph .what{font-weight:700}
 .ph .why{font-size:13px;color:var(--muted);grid-column:2}
 .ph .money{font-family:var(--f-mono);font-size:13px;text-align:right;white-space:nowrap}
 .ph .when{font-size:12px;color:var(--muted);text-align:right;grid-column:3;white-space:nowrap}
@@ -121,67 +157,68 @@ details.adv[open] summary{margin-bottom:14px}
 .cfg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:600px){.cfg{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .cfg .field{font-size:13px}
-
-.saved{display:flex;flex-direction:column;gap:8px}
-.sv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
-.sv.on{border-color:var(--accent)}
-.sv b{overflow-wrap:anywhere}
-.sv .meta{font-size:13px;color:var(--muted)}
-.sv .btns{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1;align-items:center}
-.sv select{width:auto;font-size:13px;padding:6px 8px}
-.st{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
-.st-rascunho{background:var(--track);color:var(--muted)}.st-enviada{background:var(--accent-soft);color:var(--accent)}
-.st-ganha{background:var(--high-soft);color:var(--high)}.st-perdida{background:var(--low-soft);color:var(--low)}
-
-button{font:inherit;font-weight:600;font-size:14px;border-radius:999px;padding:10px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
-button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-button.ghost{border-style:dashed;color:var(--accent);border-color:var(--accent);background:transparent;padding:14px}
-button.link{border:0;background:none;padding:4px 6px;color:var(--muted);font-size:13px}
-button:disabled{opacity:.5;cursor:not-allowed}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.nav button{flex:0 1 auto}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.actions button{flex:1 1 180px}
-.toast{font-size:13px;color:var(--high);min-height:1.2em}
-
-/* sticky summary bar */
-.bar{position:sticky;bottom:0;z-index:5;margin-top:8px;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;
+.bar{position:sticky;bottom:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;
   padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;box-shadow:0 -6px 20px rgba(20,24,40,.08)}
 .bar div{display:flex;flex-direction:column;min-width:0}
 .bar .k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 .bar .v{font-family:var(--f-display);font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar .v.tone{color:var(--tone)}
+.view-editor .wrap{padding-bottom:0}
 </style>
 </head>
 <body>
 
-<div class="wrap">
-  <header>
-    <span class="eyebrow">Stack · Comercial</span>
-    <h1>Do lead à proposta</h1>
-    <p class="muted">Responda 4 passos depois da reunião. No final você tem o preço, o prazo e a proposta pronta.</p>
-  </header>
+<div class="top">
+  <div class="top-in">
+    <div class="brand"><span class="logo">S</span><h1>Stack Comercial</h1></div>
+    <nav class="tabs" aria-label="Menu">
+      <button data-view="leads">Leads</button>
+      <button data-view="editor" id="tab-editor">+ Novo lead</button>
+      <button data-view="opcoes">Opções</button>
+    </nav>
+  </div>
+</div>
 
+<div class="wrap">
+
+<!-- ================= LEADS ================= -->
+<section id="view-leads" class="step">
+  <div class="head-row">
+    <div><h2>Seus leads</h2><p class="muted small">Todos os leads e propostas. Mova cada um conforme a negociação anda.</p></div>
+    <button class="primary" id="btn-new">+ Novo lead</button>
+  </div>
+  <div class="kpis">
+    <div class="kpi open"><span class="k">Em andamento</span><span class="v" id="m-open">0</span><span class="s" id="m-open-s"></span></div>
+    <div class="kpi won"><span class="k">Cliente aceitou</span><span class="v" id="m-won">0</span><span class="s" id="m-won-s"></span></div>
+    <div class="kpi lost"><span class="k">Não aceitou</span><span class="v" id="m-lost">0</span><span class="s" id="m-lost-s"></span></div>
+    <div class="kpi"><span class="k">Conversão</span><span class="v" id="m-conv">–</span><span class="s">aceitos ÷ fechados</span></div>
+  </div>
+  <div class="funnel" id="funnel" role="group" aria-label="Filtrar por etapa"></div>
+  <input type="search" id="search" placeholder="Buscar empresa…" aria-label="Buscar lead">
+  <div class="list" id="lead-list"></div>
+</section>
+
+<!-- ================= EDITOR ================= -->
+<section id="view-editor" class="step" hidden>
+  <div class="head-row">
+    <div><span class="eyebrow" id="ed-eyebrow">Novo lead</span><h2 id="ed-title">Do lead à proposta</h2></div>
+    <button class="link" id="ed-back">← Voltar para os leads</button>
+  </div>
   <ol class="stepper" id="stepper"></ol>
 
-  <!-- PASSO 1 -->
   <section class="step" data-step="0">
-    <div class="step-intro"><h2>Quem é o cliente?</h2><p class="muted">Comece uma proposta nova ou continue uma que já foi salva.</p></div>
+    <div class="step-intro"><h2>Quem é o cliente?</h2><p class="muted">Nome da empresa e onde ela está no processo.</p></div>
     <div class="card">
-      <label class="field" for="lead-name">Nome da empresa<input id="lead-name" type="text" value="Distribuidora Vale Norte"></label>
-      <div class="actions"><button id="new-prop">Começar do zero</button></div>
+      <label class="field" for="lead-name">Nome da empresa<input id="lead-name" type="text" placeholder="Ex.: Distribuidora Vale Norte"></label>
+      <div class="field">Em que etapa está?<div class="seg" id="stage-seg-1"></div></div>
     </div>
-    <div class="step-intro"><h3>Propostas salvas</h3><p class="muted small" id="saved-hint">Carregando…</p></div>
-    <div class="saved" id="saved"></div>
     <div class="nav"><span></span><button class="primary" data-next>Próximo: qualificar o lead →</button></div>
   </section>
 
-  <!-- PASSO 2 -->
   <section class="step" data-step="1" hidden>
     <div class="step-intro"><h2>Vale a pena investir neste lead?</h2><p class="muted">Marque o que vocês ouviram na reunião. A nota diz quanta energia comercial colocar.</p></div>
     <div class="card" id="criteria"></div>
-    <div class="verdict" id="verdict">
+    <div class="verdict">
       <span class="score"><span id="score">0</span><small>/100</small></span>
       <b id="tier"></b>
       <p id="tier-text"></p>
@@ -190,47 +227,39 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <div class="nav"><button data-prev>← Voltar</button><button class="primary" data-next>Próximo: dores do cliente →</button></div>
   </section>
 
-  <!-- PASSO 3 -->
   <section class="step" data-step="2" hidden>
-    <div class="step-intro"><h2>O que o cliente precisa resolver?</h2><p class="muted">Uma dor por cartão. Para cada uma, diga o que a Stack faz, o tamanho do trabalho e quanto isso importa para o cliente. O preço e o prazo aparecem sozinhos.</p></div>
+    <div class="step-intro"><h2>O que o cliente precisa resolver?</h2><p class="muted">Uma dor por cartão. O preço e o prazo aparecem sozinhos.</p></div>
     <div id="pains" style="display:flex;flex-direction:column;gap:12px"></div>
     <button class="ghost" id="add-pain">+ Adicionar outra dor</button>
     <div class="nav"><button data-prev>← Voltar</button><button class="primary" data-next>Próximo: ver a proposta →</button></div>
   </section>
 
-  <!-- PASSO 4 -->
   <section class="step" data-step="3" hidden>
     <div class="step-intro"><h2>Proposta</h2><p class="muted">Revise, salve e copie para enviar ao cliente.</p></div>
-
-    <div class="kpis">
+    <div class="qk">
       <div class="kpi main"><span class="k">Investimento</span><span class="v" id="k-total">R$ 0</span><span class="s" id="k-pay"></span></div>
       <div class="kpi"><span class="k">Prazo total</span><span class="v" id="k-weeks">–</span><span class="s" id="k-first"></span></div>
       <div class="kpi"><span class="k">Mensalidade</span><span class="v" id="k-month">R$ 0</span><span class="s" id="k-month-s"></span></div>
     </div>
-
     <div class="card">
       <div><h3>Ordem de entrega</h3><p class="muted small">Começamos pelo que resolve mais para o cliente no menor tempo.</p></div>
       <ol class="phases" id="phases"></ol>
     </div>
-
     <div class="card">
       <div><h3>Depois da entrega</h3><p class="muted small">Plano mensal de suporte e melhorias.</p></div>
       <div class="seg" id="plan-seg"></div>
     </div>
-
     <div class="card">
       <h3>Texto da proposta</h3>
       <pre class="prop" id="prop"></pre>
+      <div class="field">Em que etapa está este lead?<div class="seg" id="stage-seg-4"></div></div>
       <div class="actions">
-        <button class="primary" id="save">Salvar proposta</button>
-        <button id="save-new" hidden>Salvar como nova</button>
+        <button class="primary" id="save">Salvar lead</button>
         <button id="copy">Copiar texto</button>
       </div>
-      <p class="toast" id="toast" role="status"></p>
     </div>
-
     <details class="adv">
-      <summary>Ajustes avançados (margens, impostos, valor-hora)</summary>
+      <summary>Ajustes desta proposta (margens, impostos, prazos)</summary>
       <div style="display:flex;flex-direction:column;gap:16px">
         <div class="cfg">
           <label class="field" for="cont">Margem de segurança %<input id="cont" type="number" min="0" max="50" value="15"></label>
@@ -243,44 +272,58 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
           <label class="field" for="hosting">Infra / hospedagem R$/mês<input id="hosting" type="number" min="0" step="50" value="450"></label>
           <label class="field" for="prio">Ordenar entregas por<select id="prio"><option value="client">Valor para o cliente</option><option value="money">Valor em R$</option></select></label>
         </div>
-        <div><h3>Valor-hora (R$)</h3><p class="muted small">Referência de mercado para software houses no Brasil. Troque pelos valores da Stack. Fica salvo neste navegador.</p></div>
-        <div class="cfg" id="rates"></div>
-        <div><button id="reset-rates">Voltar aos valores de referência</button></div>
+        <p class="muted small" id="rates-note"></p>
+        <div><button id="use-rates">Usar o valor-hora atual das Opções</button></div>
       </div>
     </details>
-
     <div class="nav"><button data-prev>← Voltar</button><span></span></div>
   </section>
 
-  <p class="muted small">Ferramenta interna. Revise escopo e valores com o time técnico antes de enviar.</p>
-
-  <div class="bar" id="bar" aria-live="polite">
+  <div class="bar">
     <div><span class="k">Lead</span><span class="v tone" id="b-score">0/100</span></div>
     <div><span class="k">Investimento</span><span class="v" id="b-total">R$ 0</span></div>
     <div><span class="k">Prazo</span><span class="v" id="b-weeks">–</span></div>
   </div>
+</section>
+
+<!-- ================= OPÇÕES ================= -->
+<section id="view-opcoes" class="step" hidden>
+  <div><h2>Opções</h2><p class="muted small">Configurações que valem para todos os novos leads.</p></div>
+  <div class="card">
+    <div><h3>Valor-hora da Stack (R$)</h3><p class="muted small">Preço de venda por hora, antes de impostos. Os valores iniciais são uma referência de mercado: troque pelos da Stack.</p></div>
+    <div class="cfg" id="rates"></div>
+    <div><button id="reset-rates">Voltar aos valores de referência</button></div>
+  </div>
+  <div class="card">
+    <div><h3>Backup dos leads</h3><p class="muted small">Os leads ficam salvos neste navegador. Baixe um backup de vez em quando, ou use para levar os leads para outro computador.</p></div>
+    <div class="actions">
+      <button id="export">Baixar backup (.json)</button>
+      <button id="import-btn">Restaurar backup</button>
+      <input type="file" id="import" accept="application/json,.json" hidden>
+    </div>
+  </div>
+  <div class="card">
+    <div><h3>Apagar dados</h3><p class="muted small">Remove todos os leads deste navegador. Não dá para desfazer.</p></div>
+    <div><button class="danger" id="wipe">Apagar todos os leads</button></div>
+  </div>
+</section>
+
+<p class="muted small">Ferramenta interna da Stack. Revise escopo e valores com o time técnico antes de enviar propostas.</p>
 </div>
 
-<script>
-/* ---------- ARMAZENAMENTO LOCAL (Vercel) ---------- */
-const localDB=(()=>{const K="stack-propostas",subs=new Set();
-  const read=()=>{try{return JSON.parse(localStorage.getItem(K)||"{}")}catch(e){return {}}};
-  const emit=()=>{const docs=Object.entries(read()).sort((a,b)=>String(b[1].savedAt||"").localeCompare(String(a[1].savedAt||""))).map(([id,d])=>({id,data:()=>d}));
-    subs.forEach(f=>f({docs,metadata:{fromCache:false}}));};
-  const write=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(e){throw {code:"unavailable"}}emit();};
-  const ref=id=>({id,async set(d){const a=read();a[id]=d;write(a)},async update(p){const a=read();if(a[id]){Object.assign(a[id],p);write(a)}},async delete(){const a=read();delete a[id];write(a)}});
-  const col={doc:id=>ref(id||Date.now().toString(36)+Math.random().toString(36).slice(2,7)),orderBy(){return col},limit(){return col},
-    onSnapshot(f){subs.add(f);setTimeout(emit,0);return()=>subs.delete(f)}};
-  window.addEventListener("storage",e=>{if(e.key===K)emit();});
-  return {collection:()=>col};})();
+<div class="toast" id="toast" role="status" hidden></div>
 
+<script>
 const $=id=>document.getElementById(id);
 const brl=v=>(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const num=id=>Math.max(0,parseFloat($(id).value)||0);
 const wk=w=>w?(w%1?w.toLocaleString("pt-BR"):w)+(w===1?" semana":" semanas"):"–";
-
+const fmtDate=s=>s?new Date(s).toLocaleDateString("pt-BR",{day:"2-digit",month:"short"}):"";
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+let toastT;function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2800);}
 function seg(host,options,value,onPick,cols){
   host.style.setProperty("--cols",cols||options.length);host.setAttribute("role","group");host.innerHTML="";
   options.forEach(o=>{const b=document.createElement("button");b.type="button";
@@ -289,29 +332,26 @@ function seg(host,options,value,onPick,cols){
     host.appendChild(b);});
 }
 
-/* ---------- PASSOS ---------- */
-const STEPS=["Cliente","Qualificação","Dores","Proposta"],HASH=["cliente","qualificacao","dores","proposta"];
-let step=0;
-function go(n){
-  step=Math.max(0,Math.min(3,n));
-  document.querySelectorAll(".step").forEach(s=>s.hidden=+s.dataset.step!==step);
-  $("stepper").innerHTML=STEPS.map((l,i)=>`<li><button type="button" data-go="${i}" class="${i<step?"done":""}"${i===step?' aria-current="step"':""}><span class="n">${i+1}</span><span class="l">${l}</span></button></li>`).join("");
-  $("stepper").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(+b.dataset.go)));
-  try{history.replaceState(null,"","#"+HASH[step]);}catch(e){}
-  window.scrollTo({top:0});
-}
-document.querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>go(step+1)));
-document.querySelectorAll("[data-prev]").forEach(b=>b.addEventListener("click",()=>go(step-1)));
-
-/* ---------- QUALIFICAÇÃO ---------- */
+/* ================= MODELO ================= */
+const STAGES=[
+  {id:"novo",n:"Novo",c:"--muted",b:"--track"},
+  {id:"qualificado",n:"Qualificado",c:"--accent",b:"--accent-soft"},
+  {id:"proposta",n:"Proposta enviada",c:"--accent",b:"--accent-soft"},
+  {id:"negociacao",n:"Em negociação",c:"--mid",b:"--mid-soft"},
+  {id:"ganho",n:"Cliente aceitou",c:"--high",b:"--high-soft"},
+  {id:"perdido",n:"Não aceitou",c:"--low",b:"--low-soft"}
+];
+const OPEN=["novo","qualificado","proposta","negociacao"];
+const stageOf=id=>STAGES.find(s=>s.id===id)||STAGES[0];
+const LOST_REASONS=[{id:"preco",n:"Preço"},{id:"prazo",n:"Prazo"},{id:"concorrente",n:"Escolheu concorrente"},{id:"sem-resposta",n:"Parou de responder"},{id:"desistiu",n:"Desistiu do projeto"},{id:"outro",n:"Outro motivo"}];
 const LEVELS=[0,.4,.7,1];
 const CRITERIA=[
-  {id:"need",name:"O cliente tem um problema real que a Stack resolve?",max:25,opts:["Não","Vago","Sim, claro","Claro e custa caro"],ex:2},
-  {id:"budget",name:"Tem dinheiro para investir?",max:20,opts:["Não","Não sabemos","Tem verba","Verba aprovada"],ex:2},
-  {id:"decisor",name:"Estamos falando com quem decide?",max:15,opts:["Não","Com quem influencia","Decisor participa","Sim, com o decisor"],ex:1},
-  {id:"urgency",name:"Tem pressa para resolver?",max:15,opts:["Sem prazo","Algum dia","Nos próximos meses","Para já"],ex:3},
-  {id:"recur",name:"Vai precisar de suporte depois?",max:15,opts:["Projeto único","Talvez","Provavelmente","Com certeza"],ex:2},
-  {id:"fit",name:"É o tipo de projeto que a Stack faz bem?",max:10,opts:["Não","Em parte","Sim","É nosso forte"],ex:2}
+  {id:"need",name:"O cliente tem um problema real que a Stack resolve?",max:25,opts:["Não","Vago","Sim, claro","Claro e custa caro"]},
+  {id:"budget",name:"Tem dinheiro para investir?",max:20,opts:["Não","Não sabemos","Tem verba","Verba aprovada"]},
+  {id:"decisor",name:"Estamos falando com quem decide?",max:15,opts:["Não","Com quem influencia","Decisor participa","Sim, com o decisor"]},
+  {id:"urgency",name:"Tem pressa para resolver?",max:15,opts:["Sem prazo","Algum dia","Nos próximos meses","Para já"]},
+  {id:"recur",name:"Vai precisar de suporte depois?",max:15,opts:["Projeto único","Talvez","Provavelmente","Com certeza"]},
+  {id:"fit",name:"É o tipo de projeto que a Stack faz bem?",max:10,opts:["Não","Em parte","Sim","É nosso forte"]}
 ];
 const TIERS=[
   {min:80,key:"top",n:"Prioridade máxima",t:"Mandar proposta em até 48h e chamar o time técnico."},
@@ -319,32 +359,9 @@ const TIERS=[
   {min:40,key:"mid",n:"Média prioridade",t:"Faça mais perguntas antes de gastar tempo com proposta."},
   {min:0,key:"low",n:"Baixa prioridade",t:"Não invista muito tempo agora. Retome mais tarde."}
 ];
-const level={};CRITERIA.forEach(c=>level[c.id]=c.ex);
-const pts=c=>Math.round(c.max*LEVELS[level[c.id]]);
-function renderCriteria(){
-  $("criteria").innerHTML="";
-  CRITERIA.forEach(c=>{
-    const el=document.createElement("div");el.className="crit";
-    el.innerHTML=`<div class="crit-top"><span class="field">${c.name}</span><span class="pts" id="pts-${c.id}"></span></div><div class="seg"></div>`;
-    $("criteria").appendChild(el);
-    seg(el.querySelector(".seg"),c.opts.map((n,i)=>({id:i,n})),level[c.id],v=>{level[c.id]=v;update();});
-  });
-}
-let score={total:0,tier:TIERS[3]};
-function updateScore(){
-  let total=0;const weak=[];
-  CRITERIA.forEach(c=>{const p=pts(c);total+=p;$("pts-"+c.id).textContent=`${p} de ${c.max} pts`;if(level[c.id]<=1)weak.push(c);});
-  const t=TIERS.find(x=>total>=x.min);score={total,tier:t};
-  document.body.style.setProperty("--tone",`var(--${t.key})`);document.body.style.setProperty("--tone-soft",`var(--${t.key}-soft)`);
-  $("score").textContent=total;$("tier").textContent=t.n;$("tier-text").textContent=t.t;
-  $("warn").innerHTML=weak.map(c=>`<li>Ponto fraco: ${esc(c.name.toLowerCase())}</li>`).join("");
-  $("b-score").textContent=`${total}/100`;
-}
-
-/* ---------- DORES E PREÇO ---------- */
+const tierOf=s=>TIERS.find(x=>s>=x.min);
 const DEFAULT_RATES={pm:160,design:150,dev:175,qa:110};
 const ROLE_NAMES={pm:"Gestão de projeto",design:"Design",dev:"Desenvolvimento",qa:"Testes"};
-let rates=Object.assign({},DEFAULT_RATES,store.get("stack-rates",{}));
 const SERVICES=[
   {id:"lp",n:"Landing page",h:{pm:6,design:16,dev:24,qa:4}},
   {id:"site",n:"Site institucional",h:{pm:12,design:32,dev:56,qa:8}},
@@ -360,22 +377,224 @@ const SERVICES=[
 const SIZES=[{id:"low",n:"Pequeno",s:"mais simples",f:.7},{id:"mid",n:"Médio",s:"padrão",f:1},{id:"high",n:"Grande",s:"mais complexo",f:1.5}];
 const IMPACTS=[{id:2,n:"Pouco"},{id:3,n:"Médio"},{id:4,n:"Muito"},{id:5,n:"É crítico"}];
 const PLANS=[{id:"none",n:"Nenhum",h:0},{id:"basic",n:"Suporte",s:"10h/mês",h:10},{id:"evo",n:"Evolução",s:"25h/mês",h:25},{id:"squad",n:"Time dedicado",s:"80h/mês",h:80}];
+const SETTINGS=["hosting","cont","urg","disc","tax","entry","inst","cap","prio"];
+const SETTING_DEFAULTS={hosting:"450",cont:"15",urg:"0",disc:"0",tax:"11",entry:"30",inst:"4",cap:"80",prio:"client"};
 const svc=id=>SERVICES.find(s=>s.id===id)||SERVICES[0];
 const sizeF=id=>(SIZES.find(s=>s.id===id)||SIZES[1]).f;
-let plan="evo";
-let rows=[
-  {pain:"Pedidos chegam por WhatsApp e planilha, e a equipe perde pedidos.",svc:"web",cx:"mid",hours:null,impact:5},
-  {pain:"O estoque do sistema novo precisa bater com o ERP atual.",svc:"api",cx:"high",hours:null,impact:4},
-  {pain:"A diretoria não enxerga as vendas por região.",svc:"bi",cx:"low",hours:null,impact:3}
-];
+
+/* ================= ARMAZENAMENTO ================= */
+const KEY="stack-leads";
+let globalRates=Object.assign({},DEFAULT_RATES,ls.get("stack-rates",{}));
+let leads=[];
+function initStore(){
+leads=ls.get(KEY,null);
+if(!Array.isArray(leads)){
+  // migra propostas da versão anterior, se houver
+  const old=ls.get("stack-propostas",{}),map={rascunho:"novo",enviada:"proposta",ganha:"ganho",perdida:"perdido"};
+  leads=Object.entries(old).map(([id,d])=>Object.assign({},d,{id,stage:map[d.status]||"novo",createdAt:d.savedAt,updatedAt:d.savedAt,history:[{stage:map[d.status]||"novo",at:d.savedAt}]}));
+  if(!leads.length&&!ls.get("stack-seeded",false))leads=seedExamples();
+  ls.set("stack-seeded",true);persist();
+}}
+function persist(){if(!ls.set(KEY,leads))toast("Não foi possível salvar neste navegador.");}
+function seedExamples(){
+  const now=Date.now(),d=n=>new Date(now-n*864e5).toISOString();
+  const mk=(lead,stage,levels,rows,plan,extra)=>{const l=Object.assign({id:uid(),lead,stage,levels,rows,settings:Object.assign({},SETTING_DEFAULTS,{plan}),rates:Object.assign({},DEFAULT_RATES),
+    createdAt:d(extra.age),updatedAt:d(extra.upd),history:extra.hist.map(([s,a,r])=>({stage:s,at:d(a),reason:r}))},extra.more||{});computeLead(l);return l;};
+  return [
+    mk("Distribuidora Vale Norte (exemplo)","negociacao",{need:2,budget:2,decisor:1,urgency:3,recur:2,fit:2},
+      [{pain:"Pedidos chegam por WhatsApp e planilha, e a equipe perde pedidos.",svc:"web",cx:"mid",hours:null,impact:5},
+       {pain:"O estoque do sistema novo precisa bater com o ERP atual.",svc:"api",cx:"high",hours:null,impact:4}],"evo",
+      {age:12,upd:1,hist:[["novo",12],["qualificado",10],["proposta",6],["negociacao",1]]}),
+    mk("Clínica Bem Viver (exemplo)","proposta",{need:3,budget:1,decisor:3,urgency:2,recur:2,fit:3},
+      [{pain:"Pacientes não conseguem marcar consulta fora do horário comercial.",svc:"app",cx:"low",hours:null,impact:5}],"basic",
+      {age:7,upd:3,hist:[["novo",7],["qualificado",5],["proposta",3]]}),
+    mk("Padaria Trigo Bom (exemplo)","ganho",{need:2,budget:2,decisor:3,urgency:2,recur:1,fit:3},
+      [{pain:"Ninguém acha a padaria no Google.",svc:"site",cx:"low",hours:null,impact:4}],"none",
+      {age:30,upd:15,hist:[["novo",30],["proposta",24],["ganho",15]]}),
+    mk("Transportes Rota Sul (exemplo)","perdido",{need:1,budget:1,decisor:0,urgency:1,recur:1,fit:2},
+      [{pain:"Querem um painel de entregas atrasadas.",svc:"bi",cx:"mid",hours:null,impact:3}],"none",
+      {age:40,upd:20,hist:[["novo",40],["proposta",28],["perdido",20,"preco"]],more:{lostReason:"preco"}})
+  ];
+}
+
+/* ================= CÁLCULOS ================= */
+function ptsOf(levels,c){const l=levels[c.id];return l==null?0:Math.round(c.max*LEVELS[l]);}
 const baseH=r=>Object.values(svc(r.svc).h).reduce((a,b)=>a+b,0)*sizeF(r.cx);
 const rowHours=r=>r.hours==null?Math.round(baseH(r)):r.hours;
-function rowCost(r){const b=baseH(r),k=b?rowHours(r)/b:0;return Object.entries(svc(r.svc).h).reduce((s,[role,h])=>s+h*sizeF(r.cx)*k*rates[role],0);}
-const rowWeeks=r=>{const h=rowHours(r);return h?Math.max(.5,Math.ceil(h/Math.max(num("cap"),1)*2)/2):0;};
+function rowCost(r,rates){const b=baseH(r),k=b?rowHours(r)/b:0;return Object.entries(svc(r.svc).h).reduce((s,[role,h])=>s+h*sizeF(r.cx)*k*rates[role],0);}
+function quote(l){
+  const s=Object.assign({},SETTING_DEFAULTS,l.settings||{}),n=k=>Math.max(0,parseFloat(s[k])||0),rates=l.rates||globalRates;
+  const tax=Math.min(n("tax"),60)/100;
+  const factor=(1+n("cont")/100)*(1+n("urg")/100)*(1-Math.min(n("disc"),100)/100)/(1-tax);
+  const r100=v=>Math.round(v/100)*100,cap=Math.max(n("cap"),1);
+  const items=(l.rows||[]).map(r=>{const h=rowHours(r);return {r,h,w:h?Math.max(.5,Math.ceil(h/cap*2)/2):0,p:rowCost(r,rates)*factor};}).filter(x=>x.h>0);
+  items.forEach(x=>{x.ic=(x.r.impact||3)/x.w;x.im=x.p/x.w;});
+  items.sort((a,b)=>s.prio==="money"?(b.im-a.im)||(b.ic-a.ic):(b.ic-a.ic)||(b.im-a.im));
+  let acc=0;items.forEach(x=>{x.s=acc;acc+=x.w;x.e=acc;});
+  const total=r100(items.reduce((a,x)=>a+x.p,0)),p=PLANS.find(x=>x.id===s.plan)||PLANS[0];
+  const month=r100((p.h*rates.dev+n("hosting"))/(1-tax));
+  const entryPct=Math.min(n("entry"),100),inst=Math.max(1,Math.round(n("inst"))),entry=total*entryPct/100;
+  return {items,weeks:acc,hours:items.reduce((a,x)=>a+x.h,0),total,month,plan:p,entry,entryPct,inst,each:(total-entry)/inst,factor,r100,hosting:n("hosting")};
+}
+function proposalText(l,q){
+  const name=l.lead||"Cliente";
+  return [`PROPOSTA COMERCIAL · STACK`,`Cliente: ${name}`,`Data: ${new Date().toLocaleDateString("pt-BR")} · Validade: 15 dias`,"",
+    "O QUE ENTENDEMOS",
+    ...((l.rows||[]).length?l.rows.map(r=>`• ${r.pain||"(dor não descrita)"}`):["• (adicione as dores do cliente)"]),"",
+    "O QUE VAMOS ENTREGAR (EM ORDEM)",
+    ...q.items.map((x,k)=>`${k+1}. ${svc(x.r.svc).n}: ${wk(x.w)} · ${brl(q.r100(x.p))}\n   Resolve: ${x.r.pain||"(dor não descrita)"}`),"",
+    "PRAZO",
+    q.items.length?`Projeto completo em cerca de ${wk(q.weeks)}. A primeira entrega fica pronta em ${wk(q.items[0].w)}.`:"A definir.","",
+    "INVESTIMENTO",
+    `Projeto: ${brl(q.total)}`+(q.total?` (entrada de ${brl(q.entry)} + ${q.inst}x de ${brl(q.each)})`:""),
+    ...(q.plan.h||q.hosting?[`Mensalidade após a entrega: ${brl(q.month)}`+(q.plan.h?` (plano ${q.plan.n}, ${q.plan.s})`:" (infra / hospedagem)")]:[]),"",
+    "PRÓXIMOS PASSOS",
+    "Aprovação da proposta → reunião de início → começo da entrega 1."].join("\n");
+}
+function computeLead(l){
+  l.levels=l.levels||{};l.score=CRITERIA.reduce((a,c)=>a+ptsOf(l.levels,c),0);l.tier=tierOf(l.score).n;
+  const q=quote(l);l.total=q.total;l.month=q.month;l.weeks=q.weeks;l.hours=q.hours;l.text=proposalText(l,q);return q;
+}
 
+/* ================= NAVEGAÇÃO ================= */
+let view="leads";
+function show(v){
+  view=v;["leads","editor","opcoes"].forEach(x=>$("view-"+x).hidden=x!==v);
+  document.body.classList.toggle("view-editor",v==="editor");
+  document.querySelectorAll(".tabs button").forEach(b=>{if(b.dataset.view===v)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  if(v==="leads")renderLeads();
+  try{history.replaceState(null,"","#"+v);}catch(e){}
+  window.scrollTo({top:0});
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.view==="editor"&&!editing)openEditor(null);else show(b.dataset.view);}));
+$("btn-new").addEventListener("click",()=>openEditor(null));
+$("ed-back").addEventListener("click",()=>show("leads"));
+
+/* ================= LISTA DE LEADS ================= */
+let filter="open";
+$("search").addEventListener("input",renderLeads);
+function renderLeads(){
+  const sum=ids=>leads.filter(l=>ids.includes(l.stage));
+  const open=sum(OPEN),won=sum(["ganho"]),lost=sum(["perdido"]);
+  const tot=a=>a.reduce((s,l)=>s+(l.total||0),0);
+  $("m-open").textContent=open.length;$("m-open-s").textContent=brl(tot(open))+" em propostas";
+  $("m-won").textContent=won.length;$("m-won-s").textContent=brl(tot(won))+" fechados";
+  $("m-lost").textContent=lost.length;$("m-lost-s").textContent=brl(tot(lost))+" perdidos";
+  $("m-conv").textContent=won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+"%":"–";
+  const chips=[{id:"open",n:"Em andamento",c:open.length},{id:"all",n:"Todos",c:leads.length},...STAGES.map(s=>({id:s.id,n:s.n,c:leads.filter(l=>l.stage===s.id).length}))];
+  $("funnel").innerHTML=chips.map(c=>`<button type="button" data-f="${c.id}" aria-pressed="${c.id===filter}">${esc(c.n)}<span class="c">${c.c}</span></button>`).join("");
+  $("funnel").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;renderLeads();}));
+  const q=$("search").value.trim().toLowerCase();
+  const list=leads.filter(l=>filter==="all"||(filter==="open"?OPEN.includes(l.stage):l.stage===filter))
+    .filter(l=>!q||(l.lead||"").toLowerCase().includes(q))
+    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
+  const host=$("lead-list");host.innerHTML="";
+  if(!list.length){
+    host.innerHTML=`<div class="card empty"><p>${leads.length?"Nenhum lead nesta etapa.":"Nenhum lead ainda. Cadastre o primeiro depois da reunião com o cliente."}</p><button class="primary" id="empty-new">+ Novo lead</button></div>`;
+    $("empty-new").addEventListener("click",()=>openEditor(null));return;
+  }
+  list.forEach(l=>host.appendChild(leadCard(l)));
+}
+function leadCard(l){
+  const st=stageOf(l.stage),el=document.createElement("article");el.className="lc";
+  el.style.setProperty("--sc",`var(${st.c})`);el.style.setProperty("--sb",`var(${st.b})`);
+  const isOpen=OPEN.includes(l.stage),idx=OPEN.indexOf(l.stage),next=isOpen&&idx<OPEN.length-1?stageOf(OPEN[idx+1]):null;
+  const tr=tierOf(l.score||0);
+  el.innerHTML=`<div class="lc-top"><div style="min-width:0"><b></b>
+      <div class="meta">${brl(l.total)} · ${wk(l.weeks)} · lead ${l.score||0}/100 (${tr.n.toLowerCase()})</div>
+      <div class="meta">Atualizado em ${fmtDate(l.updatedAt)}</div></div>
+      <span class="badge">${st.n}</span></div>
+    ${l.stage==="perdido"&&l.lostReason?`<p class="note-lost">Motivo: ${esc((LOST_REASONS.find(r=>r.id===l.lostReason)||{n:l.lostReason}).n)}</p>`:""}
+    <div class="move">
+      ${next?`<button class="primary" data-mv="${next.id}">Avançar para ${next.n} →</button>`:""}
+      ${isOpen?`<button class="won" data-mv="ganho">✓ Cliente aceitou</button><button class="lost" data-lost>✕ Não aceitou</button>`:`<button data-mv="negociacao">Reabrir negociação</button>`}
+    </div>
+    <div class="reason" hidden><b class="small">Por que o cliente não aceitou?</b><div class="seg" data-r></div><button class="link" data-cancel style="align-self:flex-start">Cancelar</button></div>
+    <ol class="hist" hidden></ol>
+    <div class="lc-foot">
+      <button class="link" data-open>Abrir proposta</button>
+      <button class="link" data-copy>Copiar proposta</button>
+      <button class="link" data-hist>Histórico</button>
+      <button class="link danger" data-del>Excluir</button>
+      <select aria-label="Mudar etapa">${STAGES.map(s=>`<option value="${s.id}"${s.id===l.stage?" selected":""}>${s.n}</option>`).join("")}</select>
+    </div>`;
+  el.querySelector("b").textContent=l.lead||"Lead sem nome";
+  el.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>move(l,b.dataset.mv)));
+  const reason=el.querySelector(".reason");
+  const lb=el.querySelector("[data-lost]");if(lb)lb.addEventListener("click",()=>{reason.hidden=false;});
+  seg(reason.querySelector("[data-r]"),LOST_REASONS,null,r=>move(l,"perdido",r),3);
+  reason.querySelector("[data-cancel]").addEventListener("click",()=>reason.hidden=true);
+  el.querySelector("select").addEventListener("change",e=>{if(e.target.value==="perdido"){reason.hidden=false;e.target.value=l.stage;}else move(l,e.target.value);});
+  el.querySelector("[data-open]").addEventListener("click",()=>openEditor(l.id));
+  el.querySelector("[data-copy]").addEventListener("click",()=>copy(l.text||""));
+  const hist=el.querySelector(".hist");
+  el.querySelector("[data-hist]").addEventListener("click",()=>{
+    hist.hidden=!hist.hidden;
+    hist.innerHTML=(l.history||[]).slice().reverse().map(h=>`<li><b>${esc(stageOf(h.stage).n)}</b> · ${new Date(h.at).toLocaleDateString("pt-BR")}${h.reason?` · ${esc((LOST_REASONS.find(r=>r.id===h.reason)||{n:h.reason}).n)}`:""}</li>`).join("")||"<li>Sem histórico.</li>";
+  });
+  const del=el.querySelector("[data-del]");
+  del.addEventListener("click",()=>{
+    if(del.dataset.c!=="1"){del.dataset.c="1";del.textContent="Clique de novo para excluir";setTimeout(()=>{del.dataset.c="";del.textContent="Excluir";},4000);return;}
+    leads=leads.filter(x=>x.id!==l.id);persist();renderLeads();toast("Lead excluído.");
+  });
+  return el;
+}
+function move(l,stage,reason){
+  if(l.stage===stage&&!reason)return;
+  l.stage=stage;l.lostReason=stage==="perdido"?reason||l.lostReason:undefined;
+  l.updatedAt=new Date().toISOString();(l.history=l.history||[]).push({stage,at:l.updatedAt,reason:stage==="perdido"?reason:undefined});
+  persist();renderLeads();toast(`${l.lead||"Lead"} → ${stageOf(stage).n}`);
+}
+function copy(text){
+  const done=()=>toast("Proposta copiada.");
+  const fb=()=>{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){toast("Não foi possível copiar.");}ta.remove();};
+  try{navigator.clipboard.writeText(text).then(done).catch(fb);}catch(e){fb();}
+}
+
+/* ================= EDITOR ================= */
+const STEPS=["Cliente","Qualificação","Dores","Proposta"];
+let step=0,editing=null,level={},rows=[],plan="none",rates={},stage="novo";
+function go(n){
+  step=Math.max(0,Math.min(3,n));
+  document.querySelectorAll("#view-editor .step[data-step]").forEach(s=>s.hidden=+s.dataset.step!==step);
+  $("stepper").innerHTML=STEPS.map((l,i)=>`<li><button type="button" data-go="${i}" class="${i<step?"done":""}"${i===step?' aria-current="step"':""}><span class="n">${i+1}</span><span class="l">${l}</span></button></li>`).join("");
+  $("stepper").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(+b.dataset.go)));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>go(step+1)));
+document.querySelectorAll("[data-prev]").forEach(b=>b.addEventListener("click",()=>go(step-1)));
+function openEditor(id){
+  const l=id?leads.find(x=>x.id===id):null;
+  editing=l?l.id:"new";
+  $("lead-name").value=l?l.lead||"":"";
+  level=Object.assign({},l?l.levels:{});
+  rows=l?(l.rows||[]).map(r=>Object.assign({},r)):[{pain:"",svc:"site",cx:"mid",hours:null,impact:3}];
+  const s=Object.assign({},SETTING_DEFAULTS,l?l.settings:{});
+  SETTINGS.forEach(k=>$(k).value=s[k]);plan=s.plan||"none";
+  rates=Object.assign({},l&&l.rates?l.rates:globalRates);
+  stage=l?l.stage:"novo";
+  $("ed-eyebrow").textContent=l?"Editando lead":"Novo lead";$("ed-title").textContent=l?(l.lead||"Lead sem nome"):"Do lead à proposta";
+  $("tab-editor").textContent=l?"Lead aberto":"+ Novo lead";
+  renderCriteria();renderPains();renderStageSegs();
+  seg($("plan-seg"),PLANS,plan,v=>{plan=v;update();});
+  update();show("editor");go(0);
+  if(!l)$("lead-name").focus();
+}
+function renderStageSegs(){
+  ["stage-seg-1","stage-seg-4"].forEach(id=>seg($(id),STAGES.map(s=>({id:s.id,n:s.n})),stage,v=>{stage=v;renderStageSegs();},3));
+}
+function renderCriteria(){
+  $("criteria").innerHTML="";
+  CRITERIA.forEach(c=>{
+    const el=document.createElement("div");el.className="crit";
+    el.innerHTML=`<div class="crit-top"><span class="field">${c.name}</span><span class="pts" id="pts-${c.id}"></span></div><div class="seg"></div>`;
+    $("criteria").appendChild(el);
+    seg(el.querySelector(".seg"),c.opts.map((n,i)=>({id:i,n})),level[c.id],v=>{level[c.id]=v;update();});
+  });
+}
 function renderPains(){
   const host=$("pains");host.innerHTML="";
-  if(!rows.length)host.innerHTML='<div class="card"><p class="muted">Nenhuma dor ainda. Clique em “Adicionar outra dor” para começar.</p></div>';
+  if(!rows.length)host.innerHTML='<div class="card"><p class="muted">Nenhuma dor ainda. Clique em “Adicionar outra dor”.</p></div>';
   rows.forEach((r,i)=>{
     const el=document.createElement("div");el.className="pain";
     el.innerHTML=`<div class="pain-head"><span class="tag">Dor ${i+1}</span><button class="link" data-del>Remover</button></div>
@@ -389,7 +608,7 @@ function renderPains(){
         <label class="field" for="h-${i}"><span class="help">Calculado: <span id="auto-${i}"></span>h. Deixe vazio para usar o cálculo.</span>
         <input id="h-${i}" type="number" min="0" step="1" placeholder="Horas"></label></details>`;
     host.appendChild(el);
-    const ta=el.querySelector("textarea");ta.value=r.pain;
+    const ta=el.querySelector("textarea");ta.value=r.pain||"";
     ta.addEventListener("input",()=>{r.pain=ta.value;update();});
     el.querySelector("select").addEventListener("change",e=>{r.svc=e.target.value;r.hours=null;$("h-"+i).value="";update();});
     seg(el.querySelector("[data-size]"),SIZES,r.cx,v=>{r.cx=v;r.hours=null;$("h-"+i).value="";update();});
@@ -400,151 +619,85 @@ function renderPains(){
   });
 }
 $("add-pain").addEventListener("click",()=>{rows.push({pain:"",svc:"site",cx:"mid",hours:null,impact:3});renderPains();update();$("pain-"+(rows.length-1)).focus();});
-seg($("plan-seg"),PLANS,plan,v=>{plan=v;update();});
-function renderRates(){
-  $("rates").innerHTML=Object.keys(DEFAULT_RATES).map(k=>`<label class="field" for="rate-${k}">${ROLE_NAMES[k]}<input id="rate-${k}" type="number" min="0" step="5" value="${rates[k]}"></label>`).join("");
-  Object.keys(DEFAULT_RATES).forEach(k=>$("rate-"+k).addEventListener("input",e=>{rates[k]=Math.max(0,+e.target.value||0);store.set("stack-rates",rates);update();}));
-}
-$("reset-rates").addEventListener("click",()=>{rates=Object.assign({},DEFAULT_RATES);store.set("stack-rates",{});renderRates();update();});
-["cont","urg","disc","tax","entry","inst","cap","hosting","prio","lead-name"].forEach(id=>$(id).addEventListener("input",update));
+SETTINGS.concat(["lead-name"]).forEach(id=>$(id).addEventListener("input",update));
+$("use-rates").addEventListener("click",()=>{rates=Object.assign({},globalRates);update();toast("Valor-hora atualizado nesta proposta.");});
 
-let totals={},propText="";
-function updateQuote(){
-  const tax=Math.min(num("tax"),60)/100;
-  // fator que leva o custo de horas ao preço final (margem, urgência, desconto, impostos)
-  const factor=(1+num("cont")/100)*(1+num("urg")/100)*(1-Math.min(num("disc"),100)/100)/(1-tax);
-  const r100=v=>Math.round(v/100)*100;
-  const items=rows.map(r=>({r,h:rowHours(r),w:rowWeeks(r),p:rowCost(r)*factor})).filter(x=>x.h>0);
-  const prio=$("prio").value;
-  items.forEach(x=>{x.ic=(x.r.impact||3)/x.w;x.im=x.p/x.w;});
-  items.sort((a,b)=>prio==="money"?(b.im-a.im)||(b.ic-a.ic):(b.ic-a.ic)||(b.im-a.im));
-  let acc=0;items.forEach(x=>{x.s=acc;acc+=x.w;x.e=acc;});
-  const weeks=acc,hours=items.reduce((a,x)=>a+x.h,0),total=r100(items.reduce((a,x)=>a+x.p,0));
-  rows.forEach((r,i)=>{
-    const c=$("calc-"+i);if(!c)return;
+function draft(){
+  const settings={plan};SETTINGS.forEach(k=>settings[k]=$(k).value);
+  return {lead:$("lead-name").value.trim(),levels:Object.assign({},level),rows:rows.map(r=>({pain:r.pain||"",svc:r.svc,cx:r.cx,hours:r.hours,impact:r.impact||3})),settings,rates:Object.assign({},rates)};
+}
+function update(){
+  const d=draft(),q=computeLead(d);
+  // scoring
+  const weak=[];CRITERIA.forEach(c=>{$("pts-"+c.id).textContent=`${ptsOf(level,c)} de ${c.max} pts`;if(level[c.id]!=null&&level[c.id]<=1)weak.push(c);});
+  const t=tierOf(d.score);
+  document.body.style.setProperty("--tone",`var(--${t.key})`);document.body.style.setProperty("--tone-soft",`var(--${t.key}-soft)`);
+  $("score").textContent=d.score;$("tier").textContent=t.n;$("tier-text").textContent=t.t;
+  $("warn").innerHTML=weak.map(c=>`<li>Ponto fraco: ${esc(c.name.toLowerCase())}</li>`).join("");
+  // dores
+  rows.forEach((r,i)=>{const c=$("calc-"+i);if(!c)return;const h=rowHours(r),w=h?Math.max(.5,Math.ceil(h/Math.max(num("cap"),1)*2)/2):0;
     $("auto-"+i).textContent=Math.round(baseH(r));
-    c.innerHTML=`<span>Esforço <b>${rowHours(r)}h</b></span><span>Prazo <b>${wk(rowWeeks(r))}</b></span><span>Preço <b>${brl(r100(rowCost(r)*factor))}</b></span>`;
-  });
-  const p=PLANS.find(x=>x.id===plan),month=r100((p.h*rates.dev+num("hosting"))/(1-tax));
-  const entryPct=Math.min(num("entry"),100),inst=Math.max(1,Math.round(num("inst")));
-  const entry=total*entryPct/100,each=(total-entry)/inst;
-  $("k-total").textContent=brl(total);
-  $("k-pay").textContent=total?`Entrada ${brl(entry)} + ${inst}x ${brl(each)}`:"Adicione dores no passo 3";
-  $("k-weeks").textContent=wk(weeks);
-  $("k-first").textContent=items[0]?`Primeira entrega em ${wk(items[0].w)}`:"";
-  $("k-month").textContent=brl(month);
-  $("k-month-s").textContent=p.h?`Plano ${p.n} (${p.s})${num("hosting")?" + infra":""}`:(num("hosting")?"Só infra / hospedagem":"Sem mensalidade");
-  $("b-total").textContent=brl(total);$("b-weeks").textContent=wk(weeks);
-  $("phases").innerHTML=items.length?items.map((x,k)=>`<li class="ph">
-      <span class="num">${k+1}</span><span class="what">${esc(svc(x.r.svc).n)}</span><span class="money">${brl(r100(x.p))}</span>
+    c.innerHTML=`<span>Esforço <b>${h}h</b></span><span>Prazo <b>${wk(w)}</b></span><span>Preço <b>${brl(q.r100(rowCost(r,rates)*q.factor))}</b></span>`;});
+  // proposta
+  $("k-total").textContent=brl(q.total);
+  $("k-pay").textContent=q.total?`Entrada ${brl(q.entry)} + ${q.inst}x ${brl(q.each)}`:"Adicione dores no passo 3";
+  $("k-weeks").textContent=wk(q.weeks);$("k-first").textContent=q.items[0]?`Primeira entrega em ${wk(q.items[0].w)}`:"";
+  $("k-month").textContent=brl(q.month);
+  $("k-month-s").textContent=q.plan.h?`Plano ${q.plan.n} (${q.plan.s})${q.hosting?" + infra":""}`:(q.hosting?"Só infra / hospedagem":"Sem mensalidade");
+  $("phases").innerHTML=q.items.length?q.items.map((x,k)=>`<li class="ph">
+      <span class="num">${k+1}</span><span class="what">${esc(svc(x.r.svc).n)}</span><span class="money">${brl(q.r100(x.p))}</span>
       <span class="why">${esc(x.r.pain||"Dor não descrita")}</span><span class="when">sem. ${Math.floor(x.s)+1} a ${Math.ceil(x.e)}</span>
-      <div class="tl"><span style="left:${x.s/weeks*100}%;width:${x.w/weeks*100}%"></span></div></li>`).join("")
+      <div class="tl"><span style="left:${x.s/q.weeks*100}%;width:${x.w/q.weeks*100}%"></span></div></li>`).join("")
     :'<li class="muted">Nenhuma entrega ainda. Adicione as dores no passo 3.</li>';
-  totals={total,month,weeks,hours};
-  const name=$("lead-name").value.trim()||"Cliente";
-  propText=[`PROPOSTA COMERCIAL · STACK`,`Cliente: ${name}`,`Data: ${new Date().toLocaleDateString("pt-BR")} · Validade: 15 dias`,"",
-    "O QUE ENTENDEMOS",
-    ...(rows.length?rows.map(r=>`• ${r.pain||"(dor não descrita)"}`):["• (adicione as dores do cliente)"]),"",
-    "O QUE VAMOS ENTREGAR (EM ORDEM)",
-    ...items.map((x,k)=>`${k+1}. ${svc(x.r.svc).n}: ${wk(x.w)} · ${brl(r100(x.p))}\n   Resolve: ${x.r.pain||"(dor não descrita)"}`),"",
-    "PRAZO",
-    items.length?`Projeto completo em cerca de ${wk(weeks)}. A primeira entrega fica pronta em ${wk(items[0].w)}.`:"A definir.","",
-    "INVESTIMENTO",
-    `Projeto: ${brl(total)}`+(total?` (entrada de ${brl(entry)} + ${inst}x de ${brl(each)})`:""),
-    ...(p.h||num("hosting")?[`Mensalidade após a entrega: ${brl(month)}`+(p.h?` (plano ${p.n}, ${p.s})`:" (infra / hospedagem)")]:[]),"",
-    "PRÓXIMOS PASSOS",
-    "Aprovação da proposta → reunião de início → começo da entrega 1."
-  ].join("\n");
-  $("prop").textContent=propText;
+  $("prop").textContent=d.text;
+  $("rates-note").textContent=`Valor-hora usado: ${Object.keys(ROLE_NAMES).map(k=>`${ROLE_NAMES[k]} ${brl(rates[k])}`).join(" · ")}.`;
+  $("b-score").textContent=`${d.score}/100`;$("b-total").textContent=brl(q.total);$("b-weeks").textContent=wk(q.weeks);
 }
-$("copy").addEventListener("click",()=>{
-  const done=()=>toast("Texto copiado.");
-  const fallback=()=>{const ta=document.createElement("textarea");ta.value=propText;document.body.appendChild(ta);ta.select();
-    try{document.execCommand("copy");done();}catch(e){toast("Não foi possível copiar. Selecione o texto manualmente.");}ta.remove();};
-  try{navigator.clipboard.writeText(propText).then(done).catch(fallback);}catch(e){fallback();}
+$("copy").addEventListener("click",()=>copy($("prop").textContent));
+$("save").addEventListener("click",()=>{
+  const d=draft();
+  if(!d.lead){toast("Coloque o nome da empresa no passo 1.");go(0);$("lead-name").focus();return;}
+  computeLead(d);const now=new Date().toISOString();
+  let l=editing&&editing!=="new"?leads.find(x=>x.id===editing):null;
+  if(l){const prev=l.stage;Object.assign(l,d,{updatedAt:now});if(prev!==stage){l.stage=stage;(l.history=l.history||[]).push({stage,at:now});}}
+  else{l=Object.assign({id:uid(),createdAt:now,updatedAt:now,stage,history:[{stage,at:now}]},d);leads.push(l);}
+  if(stage!=="perdido")delete l.lostReason;
+  persist();editing=l.id;filter=OPEN.includes(l.stage)?"open":l.stage;
+  toast("Lead salvo.");show("leads");
 });
-function toast(m){$("toast").textContent=m;setTimeout(()=>{if($("toast").textContent===m)$("toast").textContent="";},3000);}
-function update(){updateScore();updateQuote();}
 
-/* ---------- PROPOSTAS SALVAS ---------- */
-const SETTINGS=["hosting","cont","urg","disc","tax","entry","inst","cap","prio"];
-const STATUS=[{id:"rascunho",n:"Rascunho"},{id:"enviada",n:"Enviada"},{id:"ganha",n:"Ganha"},{id:"perdida",n:"Perdida"}];
-let db=null,currentId=null,savedDocs=[];
-function snapshot(){
-  const scores={};CRITERIA.forEach(c=>scores[c.id]=pts(c));
-  const settings={plan};SETTINGS.forEach(id=>settings[id]=$(id).value);
-  return {lead:$("lead-name").value.trim()||"Lead sem nome",
-    levels:Object.assign({},level),scores,score:score.total,tier:score.tier.n,
-    rows:rows.map(r=>({pain:r.pain,svc:r.svc,cx:r.cx,hours:r.hours,impact:r.impact||3})),
-    settings,rates:Object.assign({},rates),total:totals.total,month:totals.month,weeks:totals.weeks,hours:totals.hours,
-    text:propText,savedAt:new Date().toISOString()};
+/* ================= OPÇÕES ================= */
+function renderRates(){
+  $("rates").innerHTML=Object.keys(DEFAULT_RATES).map(k=>`<label class="field" for="rate-${k}">${ROLE_NAMES[k]}<input id="rate-${k}" type="number" min="0" step="5" value="${globalRates[k]}"></label>`).join("");
+  Object.keys(DEFAULT_RATES).forEach(k=>$("rate-"+k).addEventListener("input",e=>{globalRates[k]=Math.max(0,+e.target.value||0);ls.set("stack-rates",globalRates);}));
 }
-function applyState(d){
-  $("lead-name").value=d.lead||"";
-  CRITERIA.forEach(c=>{
-    if(d.levels&&d.levels[c.id]!=null)level[c.id]=d.levels[c.id];
-    else{const f=((d.scores||{})[c.id]||0)/c.max;level[c.id]=LEVELS.reduce((b,l,i)=>Math.abs(l-f)<Math.abs(LEVELS[b]-f)?i:b,0);}
-  });
-  const s=d.settings||{};SETTINGS.forEach(id=>{if(s[id]!=null)$(id).value=s[id];});
-  plan=s.plan||"none";seg($("plan-seg"),PLANS,plan,v=>{plan=v;update();});
-  if(d.rates){rates=Object.assign({},DEFAULT_RATES,d.rates);renderRates();}
-  rows=(d.rows||[]).map(r=>Object.assign({},r));
-  renderCriteria();renderPains();update();
-}
-function setCurrent(id){currentId=id;$("save-new").hidden=!id;renderSaved();}
-$("new-prop").addEventListener("click",()=>{
-  applyState({lead:"",levels:{need:0,budget:0,decisor:0,urgency:0,recur:0,fit:0},rows:[{pain:"",svc:"site",cx:"mid",hours:null,impact:3}],settings:{plan:"none"}});
-  setCurrent(null);$("lead-name").focus();
+$("reset-rates").addEventListener("click",()=>{globalRates=Object.assign({},DEFAULT_RATES);ls.set("stack-rates",{});renderRates();toast("Valores de referência restaurados.");});
+$("export").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify({app:"stack-comercial",version:1,exportedAt:new Date().toISOString(),rates:globalRates,leads},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`stack-leads-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 });
-async function save(asNew){
-  if(!db){toast("Este navegador não permite salvar propostas.");return;}
-  const data=snapshot(),prev=!asNew&&currentId&&savedDocs.find(x=>x.id===currentId);
-  data.status=prev?prev.data.status||"rascunho":"rascunho";
-  try{const ref=prev?db.collection("propostas").doc(currentId):db.collection("propostas").doc();
-    await ref.set(data);setCurrent(ref.id);toast(prev?"Proposta atualizada.":"Proposta salva. Ela aparece no passo 1.");}
-  catch(e){toast(e&&e.code==="quota_exceeded"?"Limite de propostas atingido. Exclua propostas antigas.":"Não foi possível salvar neste navegador.");}
-}
-$("save").addEventListener("click",()=>save(false));
-$("save-new").addEventListener("click",()=>save(true));
-function renderSaved(){
-  const host=$("saved");host.innerHTML="";
-  if(!db)return;
-  $("saved-hint").textContent=savedDocs.length?"Abra uma proposta para continuar de onde parou.":"Nenhuma proposta salva ainda. Elas aparecem aqui depois que você salvar no passo 4.";
-  savedDocs.forEach(({id,data:d})=>{
-    const el=document.createElement("div");el.className="sv"+(id===currentId?" on":"");
-    const st=STATUS.find(s=>s.id===d.status)||STATUS[0];
-    el.innerHTML=`<div style="min-width:0"><b></b><div class="meta"></div></div><span class="st st-${st.id}">${st.n}</span>
-      <div class="btns"><button class="primary" data-a="open">Abrir</button>
-      <select aria-label="Status">${STATUS.map(s=>`<option value="${s.id}"${s.id===st.id?" selected":""}>${s.n}</option>`).join("")}</select>
-      <button class="link" data-a="del">Excluir</button></div>`;
-    el.querySelector("b").textContent=d.lead||"Lead sem nome";
-    el.querySelector(".meta").textContent=`${brl(d.total)} · ${wk(d.weeks||0)} · lead ${d.score??"–"}/100 · ${d.savedAt?new Date(d.savedAt).toLocaleDateString("pt-BR"):""}${d.owner?" · "+d.owner:""}`;
-    el.querySelector('[data-a="open"]').addEventListener("click",()=>{applyState(d);setCurrent(id);go(3);});
-    el.querySelector("select").addEventListener("change",async e=>{try{await db.collection("propostas").doc(id).update({status:e.target.value});}catch(_){toast("Não foi possível mudar o status.");}});
-    const del=el.querySelector('[data-a="del"]');
-    del.addEventListener("click",async()=>{
-      if(del.dataset.c!=="1"){del.dataset.c="1";del.textContent="Clique de novo para excluir";setTimeout(()=>{del.dataset.c="";del.textContent="Excluir";},4000);return;}
-      try{await db.collection("propostas").doc(id).delete();if(currentId===id)setCurrent(null);}catch(_){toast("Não foi possível excluir.");}
-    });
-    host.appendChild(el);
-  });
-}
+$("import-btn").addEventListener("click",()=>$("import").click());
+$("import").addEventListener("change",async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.leads))throw 0;
+    const ids=new Set(leads.map(l=>l.id));let n=0;
+    data.leads.forEach(l=>{if(l&&typeof l==="object"&&!ids.has(l.id)){leads.push(l);n++;}});
+    persist();toast(`${n} lead${n===1?"":"s"} restaurado${n===1?"":"s"}.`);}
+  catch(_){toast("Arquivo inválido. Use um backup baixado por esta ferramenta.");}
+  e.target.value="";
+});
+const wipe=$("wipe");
+wipe.addEventListener("click",()=>{
+  if(wipe.dataset.c!=="1"){wipe.dataset.c="1";wipe.textContent="Clique de novo para apagar tudo";setTimeout(()=>{wipe.dataset.c="";wipe.textContent="Apagar todos os leads";},4000);return;}
+  leads=[];persist();toast("Todos os leads foram apagados.");wipe.dataset.c="";wipe.textContent="Apagar todos os leads";
+});
+window.addEventListener("storage",e=>{if(e.key===KEY){leads=ls.get(KEY,[]);if(view==="leads")renderLeads();}});
 
-renderCriteria();renderRates();renderPains();update();
-go(Math.max(0,HASH.indexOf(location.hash.slice(1))));
-window.addEventListener("hashchange",()=>{const i=HASH.indexOf(location.hash.slice(1));if(i>=0&&i!==step)go(i);});
-
-(async()=>{
-  db=localDB;
-  if(!db){$("saved-hint").textContent="Este navegador não permite salvar propostas.";$("save").disabled=true;return;}
-  const timer=setTimeout(()=>{$("saved-hint").textContent="Ainda não foi possível carregar as propostas. Verifique a conexão.";},10000);
-  db.collection("propostas").orderBy("savedAt","desc").limit(200).onSnapshot(snap=>{
-    if(!snap.metadata.fromCache)clearTimeout(timer);
-    savedDocs=snap.docs.map(d=>({id:d.id,data:d.data()}));
-    if(currentId&&!savedDocs.find(x=>x.id===currentId))setCurrent(null);else renderSaved();
-  },()=>{clearTimeout(timer);$("saved-hint").textContent="Não foi possível carregar as propostas salvas.";});
-})();
+/* ================= INÍCIO ================= */
+initStore();renderRates();
+const start=location.hash.slice(1);
+if(start==="opcoes")show("opcoes");else if(start==="editor")openEditor(null);else show("leads");
 </script>
-
 </body>
 </html>

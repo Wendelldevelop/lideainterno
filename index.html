@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html{color-scheme:light}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Lead Scoring Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: guided 4-step flow, one step visible at a time, with a sticky summary bar at the bottom */
+:root{
+  --bg:#f5f6f9; --surface:#ffffff; --line:#e3e6ee; --track:#eceef4;
+  --fg:#161a26; --muted:#5d6478; --accent:#3346d3; --accent-soft:#e7eafc; --on-accent:#ffffff;
+  --low:#c43d3d; --low-soft:#fbe6e6; --mid:#b7791f; --mid-soft:#fbf0dc;
+  --high:#2f7d4f; --high-soft:#e2f3e8; --top:#3346d3; --top-soft:#e7eafc;
+  --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Manrope",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1118; --surface:#171a24; --line:#2a2e3e; --track:#232736;
+  --fg:#e9ebf3; --muted:#9aa1b6; --accent:#8b98ff; --accent-soft:#232a52; --on-accent:#0f1118;
+  --low:#f07c7c; --low-soft:#3a1d22; --mid:#e6b45c; --mid-soft:#3a2d17;
+  --high:#6fcf95; --high-soft:#163225; --top:#8b98ff; --top-soft:#232a52; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1118; --surface:#171a24; --line:#2a2e3e; --track:#232736;
+  --fg:#e9ebf3; --muted:#9aa1b6; --accent:#8b98ff; --accent-soft:#232a52; --on-accent:#0f1118;
+  --low:#f07c7c; --low-soft:#3a1d22; --mid:#e6b45c; --mid-soft:#3a2d17;
+  --high:#6fcf95; --high-soft:#163225; --top:#8b98ff; --top-soft:#232a52; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 0}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-family:var(--f-display);font-size:clamp(1.4rem,4vw,1.8rem);font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:1.3rem;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-size:1.05rem;font-weight:600;margin:0}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* stepper */
+.stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
+.stepper button{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:transparent;border:0;border-top:3px solid var(--track);border-radius:0;padding:8px 2px 0;color:var(--muted);cursor:pointer;font:inherit}
+.stepper .n{font-family:var(--f-mono);font-size:12px}
+.stepper .l{font-size:13px;font-weight:700;line-height:1.25}
+.stepper button.done{border-top-color:var(--accent);color:var(--fg)}
+.stepper button[aria-current="step"]{border-top-color:var(--accent);color:var(--accent)}
+.stepper button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:480px){.stepper .l{font-size:11.5px}}
+
+.step{display:flex;flex-direction:column;gap:16px}
+[hidden]{display:none!important}
+.step-intro{display:flex;flex-direction:column;gap:4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px}
+@media (max-width:520px){.card{padding:16px}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700;min-width:0}
+.field .help{font-weight:500;font-size:13px;color:var(--muted)}
+input[type=text],input[type=number],select,textarea{font:inherit;font-size:15px;font-weight:500;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:52px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* segmented choices */
+.seg{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:6px}
+@media (max-width:560px){.seg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.seg button{font:inherit;font-size:13.5px;font-weight:600;line-height:1.25;padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;text-align:center;min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg button small{display:block;font-weight:500;font-size:12px;opacity:.8;margin-top:2px}
+
+/* criteria */
+.crit{display:flex;flex-direction:column;gap:8px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.crit:last-child{border-bottom:0;padding-bottom:0}
+.crit-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.pts{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
+
+.verdict{background:var(--tone-soft);border-radius:12px;padding:16px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:center}
+.verdict .score{grid-row:span 3;font-family:var(--f-display);font-size:2.4rem;font-weight:700;color:var(--tone);line-height:1;font-variant-numeric:tabular-nums}
+.verdict .score small{font-size:.9rem;color:var(--muted);font-weight:500}
+.verdict b{color:var(--tone);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.verdict p{font-size:14px}
+.warn{margin:0;padding-left:18px;font-size:13px;color:var(--muted)}
+.warn:empty{display:none}
+
+/* dores */
+.pain{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface);display:flex;flex-direction:column;gap:14px}
+.pain-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tag{font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:999px}
+.calc{display:flex;flex-wrap:wrap;gap:6px 18px;background:var(--bg);border-radius:10px;padding:10px 14px;font-size:14px}
+.calc span{color:var(--muted)}
+.calc b{font-variant-numeric:tabular-nums}
+details.mini summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:600}
+details.mini[open] summary{margin-bottom:8px}
+
+/* proposta */
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.kpis{grid-template-columns:1fr}}
+.kpi{border-radius:12px;padding:14px 16px;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi.main{background:var(--accent-soft);border-color:transparent}
+.kpi .k{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-family:var(--f-display);font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi.main .v{color:var(--accent)}
+.kpi .s{font-size:13px;color:var(--muted)}
+.phases{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ph{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 12px;align-items:start}
+.ph .num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:13px;grid-row:span 2}
+.ph .what{font-weight:700;font-size:15px}
+.ph .why{font-size:13px;color:var(--muted);grid-column:2}
+.ph .money{font-family:var(--f-mono);font-size:13px;text-align:right;white-space:nowrap}
+.ph .when{font-size:12px;color:var(--muted);text-align:right;grid-column:3;white-space:nowrap}
+.tl{grid-column:2/-1;position:relative;height:6px;background:var(--track);border-radius:999px}
+.tl span{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:999px}
+.prop{white-space:pre-wrap;font-size:14px;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:16px;max-height:420px;overflow:auto;margin:0;font-family:var(--f-body)}
+details.adv{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+details.adv summary{cursor:pointer;font-weight:700}
+details.adv[open] summary{margin-bottom:14px}
+.cfg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:600px){.cfg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cfg .field{font-size:13px}
+
+.saved{display:flex;flex-direction:column;gap:8px}
+.sv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.sv.on{border-color:var(--accent)}
+.sv b{overflow-wrap:anywhere}
+.sv .meta{font-size:13px;color:var(--muted)}
+.sv .btns{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1;align-items:center}
+.sv select{width:auto;font-size:13px;padding:6px 8px}
+.st{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.st-rascunho{background:var(--track);color:var(--muted)}.st-enviada{background:var(--accent-soft);color:var(--accent)}
+.st-ganha{background:var(--high-soft);color:var(--high)}.st-perdida{background:var(--low-soft);color:var(--low)}
+
+button{font:inherit;font-weight:600;font-size:14px;border-radius:999px;padding:10px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button.ghost{border-style:dashed;color:var(--accent);border-color:var(--accent);background:transparent;padding:14px}
+button.link{border:0;background:none;padding:4px 6px;color:var(--muted);font-size:13px}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.nav button{flex:0 1 auto}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.actions button{flex:1 1 180px}
+.toast{font-size:13px;color:var(--high);min-height:1.2em}
+
+/* sticky summary bar */
+.bar{position:sticky;bottom:0;z-index:5;margin-top:8px;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:14px 14px 0 0;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;box-shadow:0 -6px 20px rgba(20,24,40,.08)}
+.bar div{display:flex;flex-direction:column;min-width:0}
+.bar .k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.bar .v{font-family:var(--f-display);font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .v.tone{color:var(--tone)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Stack · Comercial</span>
+    <h1>Do lead à proposta</h1>
+    <p class="muted">Responda 4 passos depois da reunião. No final você tem o preço, o prazo e a proposta pronta.</p>
+  </header>
+
+  <ol class="stepper" id="stepper"></ol>
+
+  <!-- PASSO 1 -->
+  <section class="step" data-step="0">
+    <div class="step-intro"><h2>Quem é o cliente?</h2><p class="muted">Comece uma proposta nova ou continue uma que já foi salva.</p></div>
+    <div class="card">
+      <label class="field" for="lead-name">Nome da empresa<input id="lead-name" type="text" value="Distribuidora Vale Norte"></label>
+      <div class="actions"><button id="new-prop">Começar do zero</button></div>
+    </div>
+    <div class="step-intro"><h3>Propostas salvas</h3><p class="muted small" id="saved-hint">Carregando…</p></div>
+    <div class="saved" id="saved"></div>
+    <div class="nav"><span></span><button class="primary" data-next>Próximo: qualificar o lead →</button></div>
+  </section>
+
+  <!-- PASSO 2 -->
+  <section class="step" data-step="1" hidden>
+    <div class="step-intro"><h2>Vale a pena investir neste lead?</h2><p class="muted">Marque o que vocês ouviram na reunião. A nota diz quanta energia comercial colocar.</p></div>
+    <div class="card" id="criteria"></div>
+    <div class="verdict" id="verdict">
+      <span class="score"><span id="score">0</span><small>/100</small></span>
+      <b id="tier"></b>
+      <p id="tier-text"></p>
+      <ul class="warn" id="warn"></ul>
+    </div>
+    <div class="nav"><button data-prev>← Voltar</button><button class="primary" data-next>Próximo: dores do cliente →</button></div>
+  </section>
+
+  <!-- PASSO 3 -->
+  <section class="step" data-step="2" hidden>
+    <div class="step-intro"><h2>O que o cliente precisa resolver?</h2><p class="muted">Uma dor por cartão. Para cada uma, diga o que a Stack faz, o tamanho do trabalho e quanto isso importa para o cliente. O preço e o prazo aparecem sozinhos.</p></div>
+    <div id="pains" style="display:flex;flex-direction:column;gap:12px"></div>
+    <button class="ghost" id="add-pain">+ Adicionar outra dor</button>
+    <div class="nav"><button data-prev>← Voltar</button><button class="primary" data-next>Próximo: ver a proposta →</button></div>
+  </section>
+
+  <!-- PASSO 4 -->
+  <section class="step" data-step="3" hidden>
+    <div class="step-intro"><h2>Proposta</h2><p class="muted">Revise, salve e copie para enviar ao cliente.</p></div>
+
+    <div class="kpis">
+      <div class="kpi main"><span class="k">Investimento</span><span class="v" id="k-total">R$ 0</span><span class="s" id="k-pay"></span></div>
+      <div class="kpi"><span class="k">Prazo total</span><span class="v" id="k-weeks">–</span><span class="s" id="k-first"></span></div>
+      <div class="kpi"><span class="k">Mensalidade</span><span class="v" id="k-month">R$ 0</span><span class="s" id="k-month-s"></span></div>
+    </div>
+
+    <div class="card">
+      <div><h3>Ordem de entrega</h3><p class="muted small">Começamos pelo que resolve mais para o cliente no menor tempo.</p></div>
+      <ol class="phases" id="phases"></ol>
+    </div>
+
+    <div class="card">
+      <div><h3>Depois da entrega</h3><p class="muted small">Plano mensal de suporte e melhorias.</p></div>
+      <div class="seg" id="plan-seg"></div>
+    </div>
+
+    <div class="card">
+      <h3>Texto da proposta</h3>
+      <pre class="prop" id="prop"></pre>
+      <div class="actions">
+        <button class="primary" id="save">Salvar proposta</button>
+        <button id="save-new" hidden>Salvar como nova</button>
+        <button id="copy">Copiar texto</button>
+      </div>
+      <p class="toast" id="toast" role="status"></p>
+    </div>
+
+    <details class="adv">
+      <summary>Ajustes avançados (margens, impostos, valor-hora)</summary>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="cfg">
+          <label class="field" for="cont">Margem de segurança %<input id="cont" type="number" min="0" max="50" value="15"></label>
+          <label class="field" for="urg">Taxa de urgência %<input id="urg" type="number" min="0" max="50" value="0"></label>
+          <label class="field" for="disc">Desconto %<input id="disc" type="number" min="0" max="30" value="0"></label>
+          <label class="field" for="tax">Impostos %<input id="tax" type="number" min="0" max="30" step="0.5" value="11"></label>
+          <label class="field" for="entry">Entrada %<input id="entry" type="number" min="0" max="100" step="5" value="30"></label>
+          <label class="field" for="inst">Parcelas<input id="inst" type="number" min="1" max="24" value="4"></label>
+          <label class="field" for="cap">Horas da equipe por semana<input id="cap" type="number" min="10" max="400" step="10" value="80"></label>
+          <label class="field" for="hosting">Infra / hospedagem R$/mês<input id="hosting" type="number" min="0" step="50" value="450"></label>
+          <label class="field" for="prio">Ordenar entregas por<select id="prio"><option value="client">Valor para o cliente</option><option value="money">Valor em R$</option></select></label>
+        </div>
+        <div><h3>Valor-hora (R$)</h3><p class="muted small">Referência de mercado para software houses no Brasil. Troque pelos valores da Stack. Fica salvo neste navegador.</p></div>
+        <div class="cfg" id="rates"></div>
+        <div><button id="reset-rates">Voltar aos valores de referência</button></div>
+      </div>
+    </details>
+
+    <div class="nav"><button data-prev>← Voltar</button><span></span></div>
+  </section>
+
+  <p class="muted small">Ferramenta interna. Revise escopo e valores com o time técnico antes de enviar.</p>
+
+  <div class="bar" id="bar" aria-live="polite">
+    <div><span class="k">Lead</span><span class="v tone" id="b-score">0/100</span></div>
+    <div><span class="k">Investimento</span><span class="v" id="b-total">R$ 0</span></div>
+    <div><span class="k">Prazo</span><span class="v" id="b-weeks">–</span></div>
+  </div>
+</div>
+
+<script>
+/* ---------- ARMAZENAMENTO LOCAL (Vercel) ---------- */
+const localDB=(()=>{const K="stack-propostas",subs=new Set();
+  const read=()=>{try{return JSON.parse(localStorage.getItem(K)||"{}")}catch(e){return {}}};
+  const emit=()=>{const docs=Object.entries(read()).sort((a,b)=>String(b[1].savedAt||"").localeCompare(String(a[1].savedAt||""))).map(([id,d])=>({id,data:()=>d}));
+    subs.forEach(f=>f({docs,metadata:{fromCache:false}}));};
+  const write=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch(e){throw {code:"unavailable"}}emit();};
+  const ref=id=>({id,async set(d){const a=read();a[id]=d;write(a)},async update(p){const a=read();if(a[id]){Object.assign(a[id],p);write(a)}},async delete(){const a=read();delete a[id];write(a)}});
+  const col={doc:id=>ref(id||Date.now().toString(36)+Math.random().toString(36).slice(2,7)),orderBy(){return col},limit(){return col},
+    onSnapshot(f){subs.add(f);setTimeout(emit,0);return()=>subs.delete(f)}};
+  window.addEventListener("storage",e=>{if(e.key===K)emit();});
+  return {collection:()=>col};})();
+
+const $=id=>document.getElementById(id);
+const brl=v=>(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const num=id=>Math.max(0,parseFloat($(id).value)||0);
+const wk=w=>w?(w%1?w.toLocaleString("pt-BR"):w)+(w===1?" semana":" semanas"):"–";
+
+function seg(host,options,value,onPick,cols){
+  host.style.setProperty("--cols",cols||options.length);host.setAttribute("role","group");host.innerHTML="";
+  options.forEach(o=>{const b=document.createElement("button");b.type="button";
+    b.innerHTML=esc(o.n)+(o.s?`<small>${esc(o.s)}</small>`:"");b.setAttribute("aria-pressed",String(o.id===value));
+    b.addEventListener("click",()=>{host.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");onPick(o.id);});
+    host.appendChild(b);});
+}
+
+/* ---------- PASSOS ---------- */
+const STEPS=["Cliente","Qualificação","Dores","Proposta"],HASH=["cliente","qualificacao","dores","proposta"];
+let step=0;
+function go(n){
+  step=Math.max(0,Math.min(3,n));
+  document.querySelectorAll(".step").forEach(s=>s.hidden=+s.dataset.step!==step);
+  $("stepper").innerHTML=STEPS.map((l,i)=>`<li><button type="button" data-go="${i}" class="${i<step?"done":""}"${i===step?' aria-current="step"':""}><span class="n">${i+1}</span><span class="l">${l}</span></button></li>`).join("");
+  $("stepper").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(+b.dataset.go)));
+  try{history.replaceState(null,"","#"+HASH[step]);}catch(e){}
+  window.scrollTo({top:0});
+}
+document.querySelectorAll("[data-next]").forEach(b=>b.addEventListener("click",()=>go(step+1)));
+document.querySelectorAll("[data-prev]").forEach(b=>b.addEventListener("click",()=>go(step-1)));
+
+/* ---------- QUALIFICAÇÃO ---------- */
+const LEVELS=[0,.4,.7,1];
+const CRITERIA=[
+  {id:"need",name:"O cliente tem um problema real que a Stack resolve?",max:25,opts:["Não","Vago","Sim, claro","Claro e custa caro"],ex:2},
+  {id:"budget",name:"Tem dinheiro para investir?",max:20,opts:["Não","Não sabemos","Tem verba","Verba aprovada"],ex:2},
+  {id:"decisor",name:"Estamos falando com quem decide?",max:15,opts:["Não","Com quem influencia","Decisor participa","Sim, com o decisor"],ex:1},
+  {id:"urgency",name:"Tem pressa para resolver?",max:15,opts:["Sem prazo","Algum dia","Nos próximos meses","Para já"],ex:3},
+  {id:"recur",name:"Vai precisar de suporte depois?",max:15,opts:["Projeto único","Talvez","Provavelmente","Com certeza"],ex:2},
+  {id:"fit",name:"É o tipo de projeto que a Stack faz bem?",max:10,opts:["Não","Em parte","Sim","É nosso forte"],ex:2}
+];
+const TIERS=[
+  {min:80,key:"top",n:"Prioridade máxima",t:"Mandar proposta em até 48h e chamar o time técnico."},
+  {min:60,key:"high",n:"Alta prioridade",t:"Vale fazer proposta. Marque a próxima reunião."},
+  {min:40,key:"mid",n:"Média prioridade",t:"Faça mais perguntas antes de gastar tempo com proposta."},
+  {min:0,key:"low",n:"Baixa prioridade",t:"Não invista muito tempo agora. Retome mais tarde."}
+];
+const level={};CRITERIA.forEach(c=>level[c.id]=c.ex);
+const pts=c=>Math.round(c.max*LEVELS[level[c.id]]);
+function renderCriteria(){
+  $("criteria").innerHTML="";
+  CRITERIA.forEach(c=>{
+    const el=document.createElement("div");el.className="crit";
+    el.innerHTML=`<div class="crit-top"><span class="field">${c.name}</span><span class="pts" id="pts-${c.id}"></span></div><div class="seg"></div>`;
+    $("criteria").appendChild(el);
+    seg(el.querySelector(".seg"),c.opts.map((n,i)=>({id:i,n})),level[c.id],v=>{level[c.id]=v;update();});
+  });
+}
+let score={total:0,tier:TIERS[3]};
+function updateScore(){
+  let total=0;const weak=[];
+  CRITERIA.forEach(c=>{const p=pts(c);total+=p;$("pts-"+c.id).textContent=`${p} de ${c.max} pts`;if(level[c.id]<=1)weak.push(c);});
+  const t=TIERS.find(x=>total>=x.min);score={total,tier:t};
+  document.body.style.setProperty("--tone",`var(--${t.key})`);document.body.style.setProperty("--tone-soft",`var(--${t.key}-soft)`);
+  $("score").textContent=total;$("tier").textContent=t.n;$("tier-text").textContent=t.t;
+  $("warn").innerHTML=weak.map(c=>`<li>Ponto fraco: ${esc(c.name.toLowerCase())}</li>`).join("");
+  $("b-score").textContent=`${total}/100`;
+}
+
+/* ---------- DORES E PREÇO ---------- */
+const DEFAULT_RATES={pm:160,design:150,dev:175,qa:110};
+const ROLE_NAMES={pm:"Gestão de projeto",design:"Design",dev:"Desenvolvimento",qa:"Testes"};
+let rates=Object.assign({},DEFAULT_RATES,store.get("stack-rates",{}));
+const SERVICES=[
+  {id:"lp",n:"Landing page",h:{pm:6,design:16,dev:24,qa:4}},
+  {id:"site",n:"Site institucional",h:{pm:12,design:32,dev:56,qa:8}},
+  {id:"ecom",n:"Loja virtual (e-commerce)",h:{pm:28,design:48,dev:160,qa:24}},
+  {id:"web",n:"Sistema web sob medida",h:{pm:48,design:60,dev:320,qa:48}},
+  {id:"app",n:"Aplicativo (iOS e Android)",h:{pm:56,design:70,dev:380,qa:60}},
+  {id:"api",n:"Integração entre sistemas (API/ERP)",h:{pm:6,design:0,dev:40,qa:8}},
+  {id:"auto",n:"Automação de processo",h:{pm:6,design:0,dev:32,qa:6}},
+  {id:"bi",n:"Painel de indicadores (BI)",h:{pm:8,design:12,dev:48,qa:8}},
+  {id:"ux",n:"Pesquisa e protótipo de UX",h:{pm:8,design:40,dev:0,qa:0}},
+  {id:"custom",n:"Outro (informar horas)",h:{pm:0,design:0,dev:20,qa:0}}
+];
+const SIZES=[{id:"low",n:"Pequeno",s:"mais simples",f:.7},{id:"mid",n:"Médio",s:"padrão",f:1},{id:"high",n:"Grande",s:"mais complexo",f:1.5}];
+const IMPACTS=[{id:2,n:"Pouco"},{id:3,n:"Médio"},{id:4,n:"Muito"},{id:5,n:"É crítico"}];
+const PLANS=[{id:"none",n:"Nenhum",h:0},{id:"basic",n:"Suporte",s:"10h/mês",h:10},{id:"evo",n:"Evolução",s:"25h/mês",h:25},{id:"squad",n:"Time dedicado",s:"80h/mês",h:80}];
+const svc=id=>SERVICES.find(s=>s.id===id)||SERVICES[0];
+const sizeF=id=>(SIZES.find(s=>s.id===id)||SIZES[1]).f;
+let plan="evo";
+let rows=[
+  {pain:"Pedidos chegam por WhatsApp e planilha, e a equipe perde pedidos.",svc:"web",cx:"mid",hours:null,impact:5},
+  {pain:"O estoque do sistema novo precisa bater com o ERP atual.",svc:"api",cx:"high",hours:null,impact:4},
+  {pain:"A diretoria não enxerga as vendas por região.",svc:"bi",cx:"low",hours:null,impact:3}
+];
+const baseH=r=>Object.values(svc(r.svc).h).reduce((a,b)=>a+b,0)*sizeF(r.cx);
+const rowHours=r=>r.hours==null?Math.round(baseH(r)):r.hours;
+function rowCost(r){const b=baseH(r),k=b?rowHours(r)/b:0;return Object.entries(svc(r.svc).h).reduce((s,[role,h])=>s+h*sizeF(r.cx)*k*rates[role],0);}
+const rowWeeks=r=>{const h=rowHours(r);return h?Math.max(.5,Math.ceil(h/Math.max(num("cap"),1)*2)/2):0;};
+
+function renderPains(){
+  const host=$("pains");host.innerHTML="";
+  if(!rows.length)host.innerHTML='<div class="card"><p class="muted">Nenhuma dor ainda. Clique em “Adicionar outra dor” para começar.</p></div>';
+  rows.forEach((r,i)=>{
+    const el=document.createElement("div");el.className="pain";
+    el.innerHTML=`<div class="pain-head"><span class="tag">Dor ${i+1}</span><button class="link" data-del>Remover</button></div>
+      <label class="field" for="pain-${i}">Qual é o problema?<span class="help">Use as palavras do cliente.</span>
+        <textarea id="pain-${i}" rows="2" placeholder="Ex.: a equipe perde 2 horas por dia conferindo pedidos"></textarea></label>
+      <label class="field" for="svc-${i}">O que a Stack vai fazer?<select id="svc-${i}">${SERVICES.map(s=>`<option value="${s.id}"${s.id===r.svc?" selected":""}>${s.n}</option>`).join("")}</select></label>
+      <div class="field">Tamanho do trabalho<div class="seg" data-size></div></div>
+      <div class="field">Quanto isso importa para o cliente?<div class="seg" data-imp></div></div>
+      <div class="calc" id="calc-${i}"></div>
+      <details class="mini"><summary>Ajustar horas manualmente</summary>
+        <label class="field" for="h-${i}"><span class="help">Calculado: <span id="auto-${i}"></span>h. Deixe vazio para usar o cálculo.</span>
+        <input id="h-${i}" type="number" min="0" step="1" placeholder="Horas"></label></details>`;
+    host.appendChild(el);
+    const ta=el.querySelector("textarea");ta.value=r.pain;
+    ta.addEventListener("input",()=>{r.pain=ta.value;update();});
+    el.querySelector("select").addEventListener("change",e=>{r.svc=e.target.value;r.hours=null;$("h-"+i).value="";update();});
+    seg(el.querySelector("[data-size]"),SIZES,r.cx,v=>{r.cx=v;r.hours=null;$("h-"+i).value="";update();});
+    seg(el.querySelector("[data-imp]"),IMPACTS,r.impact||3,v=>{r.impact=v;update();});
+    const h=$("h-"+i);if(r.hours!=null)h.value=r.hours;
+    h.addEventListener("input",()=>{const v=parseFloat(h.value);r.hours=isNaN(v)?null:Math.max(0,v);update();});
+    el.querySelector("[data-del]").addEventListener("click",()=>{rows.splice(i,1);renderPains();update();});
+  });
+}
+$("add-pain").addEventListener("click",()=>{rows.push({pain:"",svc:"site",cx:"mid",hours:null,impact:3});renderPains();update();$("pain-"+(rows.length-1)).focus();});
+seg($("plan-seg"),PLANS,plan,v=>{plan=v;update();});
+function renderRates(){
+  $("rates").innerHTML=Object.keys(DEFAULT_RATES).map(k=>`<label class="field" for="rate-${k}">${ROLE_NAMES[k]}<input id="rate-${k}" type="number" min="0" step="5" value="${rates[k]}"></label>`).join("");
+  Object.keys(DEFAULT_RATES).forEach(k=>$("rate-"+k).addEventListener("input",e=>{rates[k]=Math.max(0,+e.target.value||0);store.set("stack-rates",rates);update();}));
+}
+$("reset-rates").addEventListener("click",()=>{rates=Object.assign({},DEFAULT_RATES);store.set("stack-rates",{});renderRates();update();});
+["cont","urg","disc","tax","entry","inst","cap","hosting","prio","lead-name"].forEach(id=>$(id).addEventListener("input",update));
+
+let totals={},propText="";
+function updateQuote(){
+  const tax=Math.min(num("tax"),60)/100;
+  // fator que leva o custo de horas ao preço final (margem, urgência, desconto, impostos)
+  const factor=(1+num("cont")/100)*(1+num("urg")/100)*(1-Math.min(num("disc"),100)/100)/(1-tax);
+  const r100=v=>Math.round(v/100)*100;
+  const items=rows.map(r=>({r,h:rowHours(r),w:rowWeeks(r),p:rowCost(r)*factor})).filter(x=>x.h>0);
+  const prio=$("prio").value;
+  items.forEach(x=>{x.ic=(x.r.impact||3)/x.w;x.im=x.p/x.w;});
+  items.sort((a,b)=>prio==="money"?(b.im-a.im)||(b.ic-a.ic):(b.ic-a.ic)||(b.im-a.im));
+  let acc=0;items.forEach(x=>{x.s=acc;acc+=x.w;x.e=acc;});
+  const weeks=acc,hours=items.reduce((a,x)=>a+x.h,0),total=r100(items.reduce((a,x)=>a+x.p,0));
+  rows.forEach((r,i)=>{
+    const c=$("calc-"+i);if(!c)return;
+    $("auto-"+i).textContent=Math.round(baseH(r));
+    c.innerHTML=`<span>Esforço <b>${rowHours(r)}h</b></span><span>Prazo <b>${wk(rowWeeks(r))}</b></span><span>Preço <b>${brl(r100(rowCost(r)*factor))}</b></span>`;
+  });
+  const p=PLANS.find(x=>x.id===plan),month=r100((p.h*rates.dev+num("hosting"))/(1-tax));
+  const entryPct=Math.min(num("entry"),100),inst=Math.max(1,Math.round(num("inst")));
+  const entry=total*entryPct/100,each=(total-entry)/inst;
+  $("k-total").textContent=brl(total);
+  $("k-pay").textContent=total?`Entrada ${brl(entry)} + ${inst}x ${brl(each)}`:"Adicione dores no passo 3";
+  $("k-weeks").textContent=wk(weeks);
+  $("k-first").textContent=items[0]?`Primeira entrega em ${wk(items[0].w)}`:"";
+  $("k-month").textContent=brl(month);
+  $("k-month-s").textContent=p.h?`Plano ${p.n} (${p.s})${num("hosting")?" + infra":""}`:(num("hosting")?"Só infra / hospedagem":"Sem mensalidade");
+  $("b-total").textContent=brl(total);$("b-weeks").textContent=wk(weeks);
+  $("phases").innerHTML=items.length?items.map((x,k)=>`<li class="ph">
+      <span class="num">${k+1}</span><span class="what">${esc(svc(x.r.svc).n)}</span><span class="money">${brl(r100(x.p))}</span>
+      <span class="why">${esc(x.r.pain||"Dor não descrita")}</span><span class="when">sem. ${Math.floor(x.s)+1} a ${Math.ceil(x.e)}</span>
+      <div class="tl"><span style="left:${x.s/weeks*100}%;width:${x.w/weeks*100}%"></span></div></li>`).join("")
+    :'<li class="muted">Nenhuma entrega ainda. Adicione as dores no passo 3.</li>';
+  totals={total,month,weeks,hours};
+  const name=$("lead-name").value.trim()||"Cliente";
+  propText=[`PROPOSTA COMERCIAL · STACK`,`Cliente: ${name}`,`Data: ${new Date().toLocaleDateString("pt-BR")} · Validade: 15 dias`,"",
+    "O QUE ENTENDEMOS",
+    ...(rows.length?rows.map(r=>`• ${r.pain||"(dor não descrita)"}`):["• (adicione as dores do cliente)"]),"",
+    "O QUE VAMOS ENTREGAR (EM ORDEM)",
+    ...items.map((x,k)=>`${k+1}. ${svc(x.r.svc).n}: ${wk(x.w)} · ${brl(r100(x.p))}\n   Resolve: ${x.r.pain||"(dor não descrita)"}`),"",
+    "PRAZO",
+    items.length?`Projeto completo em cerca de ${wk(weeks)}. A primeira entrega fica pronta em ${wk(items[0].w)}.`:"A definir.","",
+    "INVESTIMENTO",
+    `Projeto: ${brl(total)}`+(total?` (entrada de ${brl(entry)} + ${inst}x de ${brl(each)})`:""),
+    ...(p.h||num("hosting")?[`Mensalidade após a entrega: ${brl(month)}`+(p.h?` (plano ${p.n}, ${p.s})`:" (infra / hospedagem)")]:[]),"",
+    "PRÓXIMOS PASSOS",
+    "Aprovação da proposta → reunião de início → começo da entrega 1."
+  ].join("\n");
+  $("prop").textContent=propText;
+}
+$("copy").addEventListener("click",()=>{
+  const done=()=>toast("Texto copiado.");
+  const fallback=()=>{const ta=document.createElement("textarea");ta.value=propText;document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");done();}catch(e){toast("Não foi possível copiar. Selecione o texto manualmente.");}ta.remove();};
+  try{navigator.clipboard.writeText(propText).then(done).catch(fallback);}catch(e){fallback();}
+});
+function toast(m){$("toast").textContent=m;setTimeout(()=>{if($("toast").textContent===m)$("toast").textContent="";},3000);}
+function update(){updateScore();updateQuote();}
+
+/* ---------- PROPOSTAS SALVAS ---------- */
+const SETTINGS=["hosting","cont","urg","disc","tax","entry","inst","cap","prio"];
+const STATUS=[{id:"rascunho",n:"Rascunho"},{id:"enviada",n:"Enviada"},{id:"ganha",n:"Ganha"},{id:"perdida",n:"Perdida"}];
+let db=null,currentId=null,savedDocs=[];
+function snapshot(){
+  const scores={};CRITERIA.forEach(c=>scores[c.id]=pts(c));
+  const settings={plan};SETTINGS.forEach(id=>settings[id]=$(id).value);
+  return {lead:$("lead-name").value.trim()||"Lead sem nome",
+    levels:Object.assign({},level),scores,score:score.total,tier:score.tier.n,
+    rows:rows.map(r=>({pain:r.pain,svc:r.svc,cx:r.cx,hours:r.hours,impact:r.impact||3})),
+    settings,rates:Object.assign({},rates),total:totals.total,month:totals.month,weeks:totals.weeks,hours:totals.hours,
+    text:propText,savedAt:new Date().toISOString()};
+}
+function applyState(d){
+  $("lead-name").value=d.lead||"";
+  CRITERIA.forEach(c=>{
+    if(d.levels&&d.levels[c.id]!=null)level[c.id]=d.levels[c.id];
+    else{const f=((d.scores||{})[c.id]||0)/c.max;level[c.id]=LEVELS.reduce((b,l,i)=>Math.abs(l-f)<Math.abs(LEVELS[b]-f)?i:b,0);}
+  });
+  const s=d.settings||{};SETTINGS.forEach(id=>{if(s[id]!=null)$(id).value=s[id];});
+  plan=s.plan||"none";seg($("plan-seg"),PLANS,plan,v=>{plan=v;update();});
+  if(d.rates){rates=Object.assign({},DEFAULT_RATES,d.rates);renderRates();}
+  rows=(d.rows||[]).map(r=>Object.assign({},r));
+  renderCriteria();renderPains();update();
+}
+function setCurrent(id){currentId=id;$("save-new").hidden=!id;renderSaved();}
+$("new-prop").addEventListener("click",()=>{
+  applyState({lead:"",levels:{need:0,budget:0,decisor:0,urgency:0,recur:0,fit:0},rows:[{pain:"",svc:"site",cx:"mid",hours:null,impact:3}],settings:{plan:"none"}});
+  setCurrent(null);$("lead-name").focus();
+});
+async function save(asNew){
+  if(!db){toast("Este navegador não permite salvar propostas.");return;}
+  const data=snapshot(),prev=!asNew&&currentId&&savedDocs.find(x=>x.id===currentId);
+  data.status=prev?prev.data.status||"rascunho":"rascunho";
+  try{const ref=prev?db.collection("propostas").doc(currentId):db.collection("propostas").doc();
+    await ref.set(data);setCurrent(ref.id);toast(prev?"Proposta atualizada.":"Proposta salva. Ela aparece no passo 1.");}
+  catch(e){toast(e&&e.code==="quota_exceeded"?"Limite de propostas atingido. Exclua propostas antigas.":"Não foi possível salvar neste navegador.");}
+}
+$("save").addEventListener("click",()=>save(false));
+$("save-new").addEventListener("click",()=>save(true));
+function renderSaved(){
+  const host=$("saved");host.innerHTML="";
+  if(!db)return;
+  $("saved-hint").textContent=savedDocs.length?"Abra uma proposta para continuar de onde parou.":"Nenhuma proposta salva ainda. Elas aparecem aqui depois que você salvar no passo 4.";
+  savedDocs.forEach(({id,data:d})=>{
+    const el=document.createElement("div");el.className="sv"+(id===currentId?" on":"");
+    const st=STATUS.find(s=>s.id===d.status)||STATUS[0];
+    el.innerHTML=`<div style="min-width:0"><b></b><div class="meta"></div></div><span class="st st-${st.id}">${st.n}</span>
+      <div class="btns"><button class="primary" data-a="open">Abrir</button>
+      <select aria-label="Status">${STATUS.map(s=>`<option value="${s.id}"${s.id===st.id?" selected":""}>${s.n}</option>`).join("")}</select>
+      <button class="link" data-a="del">Excluir</button></div>`;
+    el.querySelector("b").textContent=d.lead||"Lead sem nome";
+    el.querySelector(".meta").textContent=`${brl(d.total)} · ${wk(d.weeks||0)} · lead ${d.score??"–"}/100 · ${d.savedAt?new Date(d.savedAt).toLocaleDateString("pt-BR"):""}${d.owner?" · "+d.owner:""}`;
+    el.querySelector('[data-a="open"]').addEventListener("click",()=>{applyState(d);setCurrent(id);go(3);});
+    el.querySelector("select").addEventListener("change",async e=>{try{await db.collection("propostas").doc(id).update({status:e.target.value});}catch(_){toast("Não foi possível mudar o status.");}});
+    const del=el.querySelector('[data-a="del"]');
+    del.addEventListener("click",async()=>{
+      if(del.dataset.c!=="1"){del.dataset.c="1";del.textContent="Clique de novo para excluir";setTimeout(()=>{del.dataset.c="";del.textContent="Excluir";},4000);return;}
+      try{await db.collection("propostas").doc(id).delete();if(currentId===id)setCurrent(null);}catch(_){toast("Não foi possível excluir.");}
+    });
+    host.appendChild(el);
+  });
+}
+
+renderCriteria();renderRates();renderPains();update();
+go(Math.max(0,HASH.indexOf(location.hash.slice(1))));
+window.addEventListener("hashchange",()=>{const i=HASH.indexOf(location.hash.slice(1));if(i>=0&&i!==step)go(i);});
+
+(async()=>{
+  db=localDB;
+  if(!db){$("saved-hint").textContent="Este navegador não permite salvar propostas.";$("save").disabled=true;return;}
+  const timer=setTimeout(()=>{$("saved-hint").textContent="Ainda não foi possível carregar as propostas. Verifique a conexão.";},10000);
+  db.collection("propostas").orderBy("savedAt","desc").limit(200).onSnapshot(snap=>{
+    if(!snap.metadata.fromCache)clearTimeout(timer);
+    savedDocs=snap.docs.map(d=>({id:d.id,data:d.data()}));
+    if(currentId&&!savedDocs.find(x=>x.id===currentId))setCurrent(null);else renderSaved();
+  },()=>{clearTimeout(timer);$("saved-hint").textContent="Não foi possível carregar as propostas salvas.";});
+})();
+</script>
+
+</body>
+</html>

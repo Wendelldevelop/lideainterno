@@ -4,6 +4,10 @@ Ferramenta interna do comercial da Stack.
 
 **Leads**: lista de todos os leads com funil (Novo → Qualificado → Proposta enviada → Em negociação → Cliente aceitou / Não aceitou), totais em R$, taxa de conversão, busca, histórico e motivo de perda.
 
+**Acompanhamento**: cada lead tem uma barra com as etapas e datas, observações de follow-up (ligação, WhatsApp, e-mail, reunião), data do próximo contato e alerta de retornos atrasados. Ao enviar a proposta, o retorno é marcado para 3 dias depois.
+
+**Aprendizado**: com os leads fechados, o sistema mostra taxa de aceite por faixa de preço, ticket médio, nota média, motivos de perda e compara horas reais com estimadas. Essas dicas aparecem também na hora de montar um novo orçamento.
+
 **Novo lead** em 4 passos:
 
 1. **Cliente**: nome da empresa e propostas salvas.

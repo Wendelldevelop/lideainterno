@@ -109,6 +109,81 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .hist{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px}
 .hist li{position:relative}
 .hist li::before{content:"";position:absolute;left:-19px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+/* alerta de retorno */
+.due{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--mid-soft);border-radius:12px;padding:12px 16px;font-weight:600;font-size:14px}
+.due span:nth-child(2){flex:1 1 200px}
+.due-ico{width:24px;height:24px;border-radius:50%;background:var(--mid);color:var(--on-accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.due button{padding:8px 14px;font-size:13px}
+.funnel button.hot:not([aria-pressed="true"]) .c{background:var(--mid);color:var(--on-accent)}
+/* barra de acompanhamento */
+.track{--done:0%;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative}
+.track::before,.track::after{content:"";position:absolute;top:7px;left:10%;height:3px;border-radius:999px}
+.track::before{right:10%;background:var(--track)}
+.track::after{width:calc(var(--done) * .8);background:var(--accent)}
+.track.ganho::after{background:var(--high)} .track.perdido::after{background:var(--low)}
+.track li{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;position:relative;z-index:1;min-width:0}
+.track .dot{width:17px;height:17px;border-radius:50%;background:var(--surface);border:3px solid var(--track)}
+.track li.done .dot{background:var(--accent);border-color:var(--accent)}
+.track li.cur .dot{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.track.ganho li.cur .dot{background:var(--high);border-color:var(--high);box-shadow:0 0 0 4px var(--high-soft)}
+.track.perdido li.cur .dot{background:var(--low);border-color:var(--low);box-shadow:0 0 0 4px var(--low-soft)}
+.track.ganho li.done .dot{background:var(--high);border-color:var(--high)}
+.track.perdido li.done .dot{background:var(--low);border-color:var(--low)}
+.track .tl-l{font-size:11.5px;font-weight:700;color:var(--muted);line-height:1.2}
+.track li.cur .tl-l,.track li.done .tl-l{color:var(--fg)}
+.track .tl-d{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;min-height:1em}
+@media (max-width:480px){.track .tl-l{font-size:10.5px}}
+.follow{display:flex;gap:6px;flex-wrap:wrap}
+.follow:empty{display:none}
+.fchip{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--track);color:var(--muted)}
+.fchip.late{background:var(--low-soft);color:var(--low)}
+.fchip.today{background:var(--mid-soft);color:var(--mid)}
+.fchip.soon{background:var(--accent-soft);color:var(--accent)}
+.fchip.none{background:transparent;border:1px dashed var(--line)}
+.last-note{font-size:14px;background:var(--bg);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere}
+.last-note span{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+/* painel de acompanhamento */
+.panel{display:flex;flex-direction:column;gap:14px;background:var(--bg);border-radius:12px;padding:14px}
+.panel .seg button{background:var(--surface);min-height:38px;padding:8px 6px}
+.panel .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.panel .row input{flex:1 1 140px;width:auto;background:var(--surface)}
+.panel textarea{background:var(--surface)}
+.nform{display:flex;flex-direction:column;gap:8px}
+.real{background:var(--high-soft);border-radius:10px;padding:12px}
+.real input{background:var(--surface)}
+.tline{list-style:none;margin:8px 0 0;padding:0 0 0 16px;border-left:2px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.tline li{position:relative;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.tline li::before{content:"";position:absolute;left:-22px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.tline li.ev-note::before{background:var(--accent)}
+.ev-w{font-size:12px;color:var(--muted);font-weight:600}
+.ev-t{overflow-wrap:anywhere}
+button.link.strong{color:var(--accent);font-weight:700}
+/* aprendizado */
+.ins-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.ins-n{font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--accent);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ins-empty{display:flex;flex-direction:column;gap:10px}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.facts div{background:var(--bg);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.facts .k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.facts b{font-family:var(--f-display);font-size:1.2rem;font-variant-numeric:tabular-nums}
+.facts .s{font-size:12px;color:var(--muted)}
+.bands{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.band{display:grid;grid-template-columns:140px minmax(0,1fr) 90px;gap:10px;align-items:center;font-size:13px}
+.band .bn{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+@media (max-width:480px){.band{grid-template-columns:110px minmax(0,1fr) 70px;font-size:12px}}
+.prog-bar{height:8px;background:var(--track);border-radius:999px;overflow:hidden}
+.prog-bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+.reasons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cal-list{margin:8px 0 0;padding-left:18px;font-size:14px}
+.cal-list .neg{color:var(--low)} .cal-list .pos{color:var(--high)}
+.tips{background:var(--accent-soft);border-radius:10px;padding:12px 14px}
+.tips ul,.ins-ul{margin:6px 0 0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.learn{background:var(--accent-soft);border-color:transparent}
+.learn .ins-ul{margin:0}
+.cal{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--mid-soft);border-radius:10px;padding:10px 12px;font-size:13.5px}
+.cal span{flex:1 1 200px}
+.cal button{padding:6px 12px;font-size:13px}
 .empty{text-align:center;padding:32px 16px;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
 
 /* ---------- EDITOR ---------- */
@@ -218,9 +293,11 @@ details.adv[open] summary{margin-bottom:14px}
     <div class="kpi lost"><span class="k">Não aceitou</span><span class="v" id="m-lost">0</span><span class="s" id="m-lost-s"></span></div>
     <div class="kpi"><span class="k">Conversão</span><span class="v" id="m-conv">–</span><span class="s">aceitos ÷ fechados</span></div>
   </div>
+  <div class="due" id="due" hidden><span class="due-ico" aria-hidden="true">!</span><span id="due-t"></span><button id="due-btn">Ver quem retornar</button></div>
   <div class="funnel" id="funnel" role="group" aria-label="Filtrar por etapa"></div>
   <input type="search" id="search" placeholder="Buscar empresa…" aria-label="Buscar lead">
   <div class="list" id="lead-list"></div>
+  <section class="card" id="insights" aria-label="Aprendizado"></section>
 </section>
 
 <!-- ================= EDITOR ================= -->
@@ -270,6 +347,7 @@ details.adv[open] summary{margin-bottom:14px}
       <div class="kpi"><span class="k">Prazo total</span><span class="v" id="k-weeks">–</span><span class="s" id="k-first"></span></div>
       <div class="kpi"><span class="k">Mensalidade</span><span class="v" id="k-month">R$ 0</span><span class="s" id="k-month-s"></span></div>
     </div>
+    <div class="card learn" id="ed-insights"></div>
     <div class="card">
       <div><h3>Ordem de entrega</h3><p class="muted small">Começamos pelo que resolve mais para o cliente no menor tempo.</p></div>
       <ol class="phases" id="phases"></ol>
@@ -434,10 +512,12 @@ function seedExamples(){
     mk("Distribuidora Vale Norte (exemplo)","negociacao",{need:2,budget:2,decisor:1,urgency:3,recur:2,fit:2},
       [{pain:"Pedidos chegam por WhatsApp e planilha, e a equipe perde pedidos.",svc:"web",cx:"mid",hours:null,impact:5},
        {pain:"O estoque do sistema novo precisa bater com o ERP atual.",svc:"api",cx:"high",hours:null,impact:4}],"evo",
-      {age:12,upd:1,hist:[["novo",12],["qualificado",10],["proposta",6],["negociacao",1]]}),
+      {age:12,upd:1,hist:[["novo",12],["qualificado",10],["proposta",6],["negociacao",1]],
+       more:{nextContact:addDays(1),notes:[{id:uid(),at:d(5),type:"email",text:"Proposta enviada para o diretor financeiro."},{id:uid(),at:d(1),type:"whatsapp",text:"Gostou da proposta. Pediu para dividir a entrada em 2x. Vou mandar a nova condição."}]}}),
     mk("Clínica Bem Viver (exemplo)","proposta",{need:3,budget:1,decisor:3,urgency:2,recur:2,fit:3},
       [{pain:"Pacientes não conseguem marcar consulta fora do horário comercial.",svc:"app",cx:"low",hours:null,impact:5}],"basic",
-      {age:7,upd:3,hist:[["novo",7],["qualificado",5],["proposta",3]]}),
+      {age:7,upd:3,hist:[["novo",7],["qualificado",5],["proposta",3]],
+       more:{nextContact:addDays(-1),notes:[{id:uid(),at:d(3),type:"reuniao",text:"Apresentei a proposta por vídeo. Ficou de conversar com o sócio."}]}}),
     mk("Padaria Trigo Bom (exemplo)","ganho",{need:2,budget:2,decisor:3,urgency:2,recur:1,fit:3},
       [{pain:"Ninguém acha a padaria no Google.",svc:"site",cx:"low",hours:null,impact:4}],"none",
       {age:30,upd:15,hist:[["novo",30],["proposta",24],["ganho",15]]}),
@@ -501,8 +581,31 @@ $("btn-new").addEventListener("click",()=>openEditor(null));
 $("ed-back").addEventListener("click",()=>show("leads"));
 
 /* ================= LISTA DE LEADS ================= */
-let filter="open";
+let filter="open";const openPanels=new Set();
 $("search").addEventListener("input",renderLeads);
+const TRACK=[{id:"novo",n:"Novo"},{id:"qualificado",n:"Qualificado"},{id:"proposta",n:"Proposta enviada"},{id:"negociacao",n:"Negociação"},{id:"fim",n:"Resultado"}];
+const NOTE_TYPES=[{id:"ligacao",n:"Ligação"},{id:"whatsapp",n:"WhatsApp"},{id:"email",n:"E-mail"},{id:"reuniao",n:"Reunião"},{id:"outro",n:"Outro"}];
+const isoDay=d=>{d=new Date(d);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
+const todayISO=()=>isoDay(new Date());
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return isoDay(d);};
+const dayDiff=s=>Math.round((new Date(s+"T12:00:00")-new Date(todayISO()+"T12:00:00"))/864e5);
+const daysSince=iso=>Math.max(0,Math.floor((Date.now()-new Date(iso))/864e5));
+const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
+const isExample=l=>/\(exemplo\)\s*$/.test(l.lead||"");
+const firstAt=(l,stage)=>{const h=(l.history||[]).find(h=>h.stage===stage);return h&&h.at;};
+const sentAt=l=>firstAt(l,"proposta")||firstAt(l,"negociacao");
+const reasonName=id=>(LOST_REASONS.find(r=>r.id===id)||{n:id}).n;
+function followState(l){
+  if(!OPEN.includes(l.stage))return null;
+  if(!l.nextContact)return sentAt(l)?{cls:"none",t:"Sem retorno marcado"}:null;
+  const d=dayDiff(l.nextContact);
+  if(d<0)return {cls:"late",t:`Retorno atrasado ${plural(-d,"dia","dias")}`};
+  if(d===0)return {cls:"today",t:"Retornar hoje"};
+  if(d===1)return {cls:"soon",t:"Retornar amanhã"};
+  return {cls:"soon",t:`Retornar em ${new Date(l.nextContact+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})}`};
+}
+const needsFollow=l=>{const f=followState(l);return !!f&&(f.cls==="late"||f.cls==="today");};
+
 function renderLeads(){
   const sum=ids=>leads.filter(l=>ids.includes(l.stage));
   const open=sum(OPEN),won=sum(["ganho"]),lost=sum(["perdido"]);
@@ -511,44 +614,88 @@ function renderLeads(){
   $("m-won").textContent=won.length;$("m-won-s").textContent=brl(tot(won))+" fechados";
   $("m-lost").textContent=lost.length;$("m-lost-s").textContent=brl(tot(lost))+" perdidos";
   $("m-conv").textContent=won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+"%":"–";
-  const chips=[{id:"open",n:"Em andamento",c:open.length},{id:"all",n:"Todos",c:leads.length},...STAGES.map(s=>({id:s.id,n:s.n,c:leads.filter(l=>l.stage===s.id).length}))];
-  $("funnel").innerHTML=chips.map(c=>`<button type="button" data-f="${c.id}" aria-pressed="${c.id===filter}">${esc(c.n)}<span class="c">${c.c}</span></button>`).join("");
+  const due=leads.filter(needsFollow);
+  $("due").hidden=!due.length;
+  $("due-t").textContent=`${plural(due.length,"lead precisa","leads precisam")} de retorno hoje ou ${due.length===1?"está atrasado":"estão atrasados"}.`;
+  const chips=[{id:"open",n:"Em andamento",c:open.length},{id:"retorno",n:"Retornar",c:due.length},{id:"all",n:"Todos",c:leads.length},...STAGES.map(s=>({id:s.id,n:s.n,c:leads.filter(l=>l.stage===s.id).length}))];
+  $("funnel").innerHTML=chips.map(c=>`<button type="button" data-f="${c.id}" aria-pressed="${c.id===filter}"${c.id==="retorno"&&c.c?' class="hot"':""}>${esc(c.n)}<span class="c">${c.c}</span></button>`).join("");
   $("funnel").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;renderLeads();}));
   const q=$("search").value.trim().toLowerCase();
-  const list=leads.filter(l=>filter==="all"||(filter==="open"?OPEN.includes(l.stage):l.stage===filter))
+  const urg=l=>{const f=followState(l);return !f?9:f.cls==="late"?0:f.cls==="today"?1:f.cls==="none"?2:3;};
+  const list=leads.filter(l=>filter==="all"||(filter==="open"?OPEN.includes(l.stage):filter==="retorno"?needsFollow(l):l.stage===filter))
     .filter(l=>!q||(l.lead||"").toLowerCase().includes(q))
-    .sort((a,b)=>String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
+    .sort((a,b)=>(urg(a)-urg(b))||String(b.updatedAt||"").localeCompare(String(a.updatedAt||"")));
   const host=$("lead-list");host.innerHTML="";
   if(!list.length){
-    host.innerHTML=`<div class="card empty"><p>${leads.length?"Nenhum lead nesta etapa.":"Nenhum lead ainda. Cadastre o primeiro depois da reunião com o cliente."}</p><button class="primary" id="empty-new">+ Novo lead</button></div>`;
-    $("empty-new").addEventListener("click",()=>openEditor(null));return;
-  }
-  list.forEach(l=>host.appendChild(leadCard(l)));
+    host.innerHTML=`<div class="card empty"><p>${!leads.length?"Nenhum lead ainda. Cadastre o primeiro depois da reunião com o cliente.":filter==="retorno"?"Nenhum retorno pendente. Tudo em dia.":"Nenhum lead nesta etapa."}</p><button class="primary" id="empty-new">+ Novo lead</button></div>`;
+    $("empty-new").addEventListener("click",()=>openEditor(null));
+  } else list.forEach(l=>host.appendChild(leadCard(l)));
+  renderInsights();
+}
+$("due-btn").addEventListener("click",()=>{filter="retorno";renderLeads();});
+
+function trackerHTML(l){
+  const closed=l.stage==="ganho"||l.stage==="perdido",cur=closed?4:OPEN.indexOf(l.stage);
+  return `<ol class="track${closed?" "+l.stage:""}" style="--done:${cur/4*100}%">${TRACK.map((t,i)=>{
+    const at=i<4?firstAt(l,t.id):(closed?firstAt(l,l.stage)||l.updatedAt:null);
+    const label=i===4&&closed?stageOf(l.stage).n:t.n;
+    const cls=i<cur?"done":i===cur?"cur":"";
+    return `<li class="${cls}"><span class="dot"></span><span class="tl-l">${esc(label)}</span><span class="tl-d">${at&&i<=cur?fmtDate(at):""}</span></li>`;}).join("")}</ol>`;
+}
+function timelineHTML(l){
+  const items=[...(l.history||[]).map(h=>({at:h.at,k:"stage",h})),...(l.notes||[]).map(n=>({at:n.at,k:"note",n}))].sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+  if(!items.length)return '<li class="muted">Nada registrado ainda.</li>';
+  return items.map(x=>{
+    const when=new Date(x.at).toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});
+    if(x.k==="stage")return `<li class="ev-stage"><span class="ev-w">${when}</span><span>Etapa: <b>${esc(stageOf(x.h.stage).n)}</b>${x.h.reason?` · motivo: ${esc(reasonName(x.h.reason))}`:""}</span></li>`;
+    return `<li class="ev-note"><span class="ev-w">${when} · ${esc((NOTE_TYPES.find(t=>t.id===x.n.type)||NOTE_TYPES[4]).n)}</span><span class="ev-t">${esc(x.n.text)}</span></li>`;
+  }).join("");
 }
 function leadCard(l){
   const st=stageOf(l.stage),el=document.createElement("article");el.className="lc";
   el.style.setProperty("--sc",`var(${st.c})`);el.style.setProperty("--sb",`var(${st.b})`);
   const isOpen=OPEN.includes(l.stage),idx=OPEN.indexOf(l.stage),next=isOpen&&idx<OPEN.length-1?stageOf(OPEN[idx+1]):null;
-  const tr=tierOf(l.score||0);
-  el.innerHTML=`<div class="lc-top"><div style="min-width:0"><b></b>
-      <div class="meta">${brl(l.total)} · ${wk(l.weeks)} · lead ${l.score||0}/100 (${tr.n.toLowerCase()})</div>
-      <div class="meta">Atualizado em ${fmtDate(l.updatedAt)}</div></div>
+  const tr=tierOf(l.score||0),f=followState(l),sent=sentAt(l),last=(l.notes||[]).slice(-1)[0],nNotes=(l.notes||[]).length;
+  const panelOpen=openPanels.has(l.id),fid="n-"+l.id;
+  el.innerHTML=`<div class="lc-top"><div style="min-width:0"><b class="lc-name"></b>
+      <div class="meta">${brl(l.total)} · ${wk(l.weeks)} · lead ${l.score||0}/100 (${tr.n.toLowerCase()})</div></div>
       <span class="badge">${st.n}</span></div>
-    ${l.stage==="perdido"&&l.lostReason?`<p class="note-lost">Motivo: ${esc((LOST_REASONS.find(r=>r.id===l.lostReason)||{n:l.lostReason}).n)}</p>`:""}
+    ${trackerHTML(l)}
+    <div class="follow">
+      ${sent&&isOpen?`<span class="fchip">Proposta enviada há ${plural(daysSince(sent),"dia","dias")}</span>`:""}
+      ${f?`<span class="fchip ${f.cls}">${f.t}</span>`:""}
+      ${l.stage==="perdido"&&l.lostReason?`<span class="fchip late">Motivo: ${esc(reasonName(l.lostReason))}</span>`:""}
+      ${l.stage==="ganho"&&!l.realHours&&!isExample(l)?`<span class="fchip soon">Informe as horas reais quando terminar</span>`:""}
+    </div>
+    ${last?`<p class="last-note"><span>${fmtDate(last.at)} · ${esc((NOTE_TYPES.find(t=>t.id===last.type)||NOTE_TYPES[4]).n)}</span></p>`:""}
     <div class="move">
       ${next?`<button class="primary" data-mv="${next.id}">Avançar para ${next.n} →</button>`:""}
       ${isOpen?`<button class="won" data-mv="ganho">✓ Cliente aceitou</button><button class="lost" data-lost>✕ Não aceitou</button>`:`<button data-mv="negociacao">Reabrir negociação</button>`}
     </div>
     <div class="reason" hidden><b class="small">Por que o cliente não aceitou?</b><div class="seg" data-r></div><button class="link" data-cancel style="align-self:flex-start">Cancelar</button></div>
-    <ol class="hist" hidden></ol>
+    <div class="panel"${panelOpen?"":" hidden"}>
+      ${l.stage==="ganho"?`<div class="real"><label class="field" for="rh-${l.id}">Quantas horas o projeto levou de verdade?<span class="help">Estimado: ${l.hours||0}h. Isso ensina o sistema a estimar melhor os próximos orçamentos.</span>
+        <span class="row"><input id="rh-${l.id}" type="number" min="0" step="1" value="${l.realHours||""}" placeholder="Horas reais"><button data-rh>Salvar</button></span></label></div>`:""}
+      <div class="nform">
+        <b class="small">Nova observação</b>
+        <div class="seg" data-nt></div>
+        <textarea id="${fid}" rows="2" placeholder="Ex.: cliente pediu para rever o prazo da fase 2"></textarea>
+        ${isOpen?`<div class="field small">Próximo contato
+          <span class="row"><input type="date" id="nd-${l.id}" value="${l.nextContact||""}">
+          <button class="link" data-d="1">Amanhã</button><button class="link" data-d="3">Em 3 dias</button><button class="link" data-d="7">Em 1 semana</button></span></div>`:""}
+        <div><button class="primary" data-save-note>Salvar observação</button></div>
+      </div>
+      <div><b class="small">Linha do tempo</b><ol class="tline">${timelineHTML(l)}</ol></div>
+    </div>
     <div class="lc-foot">
+      <button class="link strong" data-panel>${panelOpen?"Fechar acompanhamento":`Acompanhamento${nNotes?` (${nNotes})`:""}`}</button>
       <button class="link" data-open>Abrir proposta</button>
       <button class="link" data-copy>Copiar proposta</button>
-      <button class="link" data-hist>Histórico</button>
       <button class="link danger" data-del>Excluir</button>
       <select aria-label="Mudar etapa">${STAGES.map(s=>`<option value="${s.id}"${s.id===l.stage?" selected":""}>${s.n}</option>`).join("")}</select>
     </div>`;
-  el.querySelector("b").textContent=l.lead||"Lead sem nome";
+  el.querySelector(".lc-name").textContent=l.lead||"Lead sem nome";
+  if(last){const p=el.querySelector(".last-note");p.append(document.createTextNode(" "+last.text));}
   el.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>move(l,b.dataset.mv)));
   const reason=el.querySelector(".reason");
   const lb=el.querySelector("[data-lost]");if(lb)lb.addEventListener("click",()=>{reason.hidden=false;});
@@ -557,11 +704,20 @@ function leadCard(l){
   el.querySelector("select").addEventListener("change",e=>{if(e.target.value==="perdido"){reason.hidden=false;e.target.value=l.stage;}else move(l,e.target.value);});
   el.querySelector("[data-open]").addEventListener("click",()=>openEditor(l.id));
   el.querySelector("[data-copy]").addEventListener("click",()=>copy(l.text||""));
-  const hist=el.querySelector(".hist");
-  el.querySelector("[data-hist]").addEventListener("click",()=>{
-    hist.hidden=!hist.hidden;
-    hist.innerHTML=(l.history||[]).slice().reverse().map(h=>`<li><b>${esc(stageOf(h.stage).n)}</b> · ${new Date(h.at).toLocaleDateString("pt-BR")}${h.reason?` · ${esc((LOST_REASONS.find(r=>r.id===h.reason)||{n:h.reason}).n)}`:""}</li>`).join("")||"<li>Sem histórico.</li>";
+  el.querySelector("[data-panel]").addEventListener("click",()=>{if(openPanels.has(l.id))openPanels.delete(l.id);else openPanels.add(l.id);renderLeads();});
+  let ntype="whatsapp";seg(el.querySelector("[data-nt]"),NOTE_TYPES,ntype,v=>ntype=v,5);
+  el.querySelectorAll("[data-d]").forEach(b=>b.addEventListener("click",()=>{$("nd-"+l.id).value=addDays(+b.dataset.d);}));
+  el.querySelector("[data-save-note]").addEventListener("click",()=>{
+    const text=$(fid).value.trim(),di=$("nd-"+l.id),date=di?di.value:"";
+    if(!text&&(!di||date===(l.nextContact||""))){toast("Escreva a observação ou marque o próximo contato.");$(fid).focus();return;}
+    const now=new Date().toISOString();
+    if(text)(l.notes=l.notes||[]).push({id:uid(),at:now,type:ntype,text});
+    if(di)l.nextContact=date||null;
+    l.updatedAt=now;persist();openPanels.add(l.id);renderLeads();
+    toast(text?(date?"Observação salva e retorno marcado.":"Observação salva."):"Próximo contato marcado.");
   });
+  const rh=el.querySelector("[data-rh]");
+  if(rh)rh.addEventListener("click",()=>{const v=parseFloat($("rh-"+l.id).value);l.realHours=v>0?v:null;l.updatedAt=new Date().toISOString();persist();renderLeads();toast(v>0?"Horas reais salvas. Os próximos orçamentos usam esse aprendizado.":"Horas reais removidas.");});
   const del=el.querySelector("[data-del]");
   del.addEventListener("click",()=>{
     if(del.dataset.c!=="1"){del.dataset.c="1";del.textContent="Clique de novo para excluir";setTimeout(()=>{del.dataset.c="";del.textContent="Excluir";},4000);return;}
@@ -571,9 +727,73 @@ function leadCard(l){
 }
 function move(l,stage,reason){
   if(l.stage===stage&&!reason)return;
+  const prev=l.stage;
   l.stage=stage;l.lostReason=stage==="perdido"?reason||l.lostReason:undefined;
   l.updatedAt=new Date().toISOString();(l.history=l.history||[]).push({stage,at:l.updatedAt,reason:stage==="perdido"?reason:undefined});
-  persist();renderLeads();toast(`${l.lead||"Lead"} → ${stageOf(stage).n}`);
+  let msg=`${l.lead||"Lead"} → ${stageOf(stage).n}`;
+  if(!OPEN.includes(stage))l.nextContact=null;
+  else if(stage==="proposta"&&prev!=="proposta"&&!l.nextContact){l.nextContact=addDays(3);msg+=". Retorno marcado para daqui 3 dias.";}
+  if(stage==="ganho")openPanels.add(l.id);
+  persist();renderLeads();toast(msg);
+}
+
+/* ================= APRENDIZADO ================= */
+const BANDS=[[0,1e4,"Até R$ 10 mil"],[1e4,3e4,"R$ 10 a 30 mil"],[3e4,8e4,"R$ 30 a 80 mil"],[8e4,Infinity,"Acima de R$ 80 mil"]];
+const MIN_LEARN=3;
+function learnData(){
+  const closed=leads.filter(l=>(l.stage==="ganho"||l.stage==="perdido")&&!isExample(l));
+  const won=closed.filter(l=>l.stage==="ganho"),lost=closed.filter(l=>l.stage==="perdido");
+  const avg=(a,fn)=>a.length?a.reduce((s,x)=>s+fn(x),0)/a.length:null;
+  const bands=BANDS.map(([a,b,n])=>{const inB=closed.filter(l=>(l.total||0)>=a&&(l.total||0)<b);return {n,a,b,c:inB.length,w:inB.filter(l=>l.stage==="ganho").length};});
+  const rc={};lost.forEach(l=>{if(l.lostReason)rc[l.lostReason]=(rc[l.lostReason]||0)+1;});
+  const reasons=Object.entries(rc).sort((a,b)=>b[1]-a[1]);
+  const cyc=won.map(l=>{const e=firstAt(l,"ganho");return e&&l.createdAt?(new Date(e)-new Date(l.createdAt))/864e5:null;}).filter(x=>x!=null);
+  const calib={};
+  won.filter(l=>l.realHours>0&&l.hours>0).forEach(l=>{const ratio=l.realHours/l.hours;
+    (l.rows||[]).forEach(r=>{const e=rowHours(r);if(!e)return;const c=calib[r.svc]=calib[r.svc]||{real:0,est:0,leads:new Set()};c.real+=e*ratio;c.est+=e;c.leads.add(l.id);});});
+  Object.values(calib).forEach(c=>{c.ratio=c.real/c.est;c.n=c.leads.size;});
+  return {closed,won,lost,avgWon:avg(won,l=>l.total||0),avgLost:avg(lost,l=>l.total||0),scoreWon:avg(won,l=>l.score||0),scoreLost:avg(lost,l=>l.score||0),bands,reasons,cycle:cyc.length?avg(cyc,x=>x):null,calib};
+}
+function renderInsights(){
+  const L=learnData(),host=$("insights");
+  const pct=(a,b)=>b?Math.round(a/b*100):0;
+  let html=`<div class="ins-head"><div><h3>O que os orçamentos ensinaram</h3><p class="muted small">O sistema aprende com cada lead fechado. Leads de exemplo não contam.</p></div><span class="ins-n">${plural(L.closed.length,"fechado","fechados")}</span></div>`;
+  if(L.closed.length<MIN_LEARN){
+    html+=`<div class="ins-empty"><div class="prog-bar"><span style="width:${pct(L.closed.length,MIN_LEARN)}%"></span></div>
+      <p class="small">Marque os leads como <b>Cliente aceitou</b> ou <b>Não aceitou</b> (com o motivo). Faltam ${plural(MIN_LEARN-L.closed.length,"lead fechado","leads fechados")} para as primeiras conclusões. Nos projetos aceitos, informe as horas reais para o sistema calibrar as estimativas.</p></div>`;
+    host.innerHTML=html;return;
+  }
+  const facts=[
+    ["Taxa de aceite",`${pct(L.won.length,L.closed.length)}%`,`${L.won.length} de ${L.closed.length} propostas`],
+    ["Ticket médio aceito",L.avgWon!=null?brl(L.avgWon):"–",L.avgLost!=null?`recusados: ${brl(L.avgLost)}`:""],
+    ["Nota média dos aceitos",L.scoreWon!=null?Math.round(L.scoreWon)+"/100":"–",L.scoreLost!=null?`recusados: ${Math.round(L.scoreLost)}/100`:""],
+    ["Tempo até fechar",L.cycle!=null?plural(Math.round(L.cycle),"dia","dias"):"–","média dos aceitos"]
+  ];
+  html+=`<div class="facts">${facts.map(([k,v,s])=>`<div><span class="k">${k}</span><b>${v}</b><span class="s">${s}</span></div>`).join("")}</div>`;
+  html+=`<div><b class="small">Aceite por faixa de preço</b><div class="bands">${L.bands.map(b=>`<div class="band"><span>${b.n}</span><div class="prog-bar"><span style="width:${b.c?pct(b.w,b.c):0}%"></span></div><span class="bn">${b.c?`${pct(b.w,b.c)}% · ${b.w}/${b.c}`:"sem dados"}</span></div>`).join("")}</div></div>`;
+  if(L.reasons.length)html+=`<div><b class="small">Por que perdemos</b><div class="reasons">${L.reasons.map(([r,n])=>`<span class="fchip late">${esc(reasonName(r))} · ${pct(n,L.lost.length)}%</span>`).join("")}</div></div>`;
+  const cal=Object.entries(L.calib);
+  if(cal.length)html+=`<div><b class="small">Horas reais × estimadas</b><ul class="cal-list">${cal.map(([s,c])=>{const d=Math.round((c.ratio-1)*100);return `<li>${esc(svc(s).n)}: <b class="${d>0?"neg":"pos"}">${d>0?"+":""}${d}%</b> <span class="muted">(${plural(c.n,"projeto","projetos")})</span></li>`;}).join("")}</ul></div>`;
+  const tips=[];
+  if(L.reasons[0]&&L.reasons[0][0]==="preco"&&L.reasons[0][1]/L.lost.length>=.4)tips.push("Muitas perdas por preço. Ofereça começar só pela fase 1 ou parcele mais a entrada.");
+  if(L.scoreWon!=null&&L.scoreLost!=null&&L.scoreWon-L.scoreLost>=15)tips.push(`Leads aceitos têm nota bem maior (${Math.round(L.scoreWon)} contra ${Math.round(L.scoreLost)}). Priorize os de nota alta e qualifique melhor os outros antes de orçar.`);
+  const under=cal.filter(([,c])=>c.ratio>=1.1);if(under.length)tips.push(`Projetos de ${under.map(([s])=>svc(s).n.toLowerCase()).join(", ")} levam mais horas que o estimado. O sistema já sugere a correção nos próximos orçamentos.`);
+  const best=L.bands.filter(b=>b.c>=2).sort((a,b)=>b.w/b.c-a.w/a.c)[0];if(best)tips.push(`A faixa que mais fecha é ${best.n.toLowerCase()} (${pct(best.w,best.c)}%).`);
+  if(tips.length)html+=`<div class="tips"><b class="small">Recomendações</b><ul>${tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`;
+  host.innerHTML=html;
+}
+function editorInsights(d){
+  const L=learnData(),host=$("ed-insights"),out=[],pct=(a,b)=>Math.round(a/b*100);
+  if(d.total){
+    const b=L.bands.find(b=>d.total>=b.a&&d.total<b.b);
+    if(b&&b.c)out.push(`Propostas na faixa <b>${b.n.toLowerCase()}</b>: ${b.w} de ${b.c} aceitas (${pct(b.w,b.c)}%).`);
+    if(L.avgWon&&d.total>L.avgWon*1.3)out.push(`Este orçamento está <b>${pct(d.total-L.avgWon,L.avgWon)}% acima</b> do ticket médio aceito (${brl(L.avgWon)}). Considere dividir em fases.`);
+  }
+  const sim=L.closed.filter(l=>Math.abs((l.score||0)-d.score)<=10);
+  if(sim.length)out.push(`Leads com nota parecida (${d.score}/100): ${sim.filter(l=>l.stage==="ganho").length} de ${sim.length} aceitaram.`);
+  const adj=(d.rows||[]).filter(r=>{const c=L.calib[r.svc];return c&&Math.abs(c.ratio-1)>=.1;});
+  if(adj.length)out.push(`As horas de ${adj.map(r=>svc(r.svc).n.toLowerCase()).filter((v,i,a)=>a.indexOf(v)===i).join(", ")} podem ser corrigidas com base em projetos reais (veja no passo 3).`);
+  host.innerHTML=`<div><h3>O que os orçamentos anteriores dizem</h3></div>`+(out.length?`<ul class="ins-ul">${out.map(t=>`<li>${t}</li>`).join("")}</ul>`:`<p class="muted small">Ainda sem histórico parecido. Cada lead fechado (aceito ou recusado) deixa estas dicas mais precisas.</p>`);
 }
 function copy(text){
   const done=()=>toast("Proposta copiada.");
@@ -636,6 +856,7 @@ function renderPains(){
       <div class="field">Tamanho do trabalho<div class="seg" data-size></div></div>
       <div class="field">Quanto isso importa para o cliente?<div class="seg" data-imp></div></div>
       <div class="calc" id="calc-${i}"></div>
+      <div class="cal" id="cal-${i}" hidden></div>
       <details class="mini"><summary>Ajustar horas manualmente</summary>
         <label class="field" for="h-${i}"><span class="help">Calculado: <span id="auto-${i}"></span>h. Deixe vazio para usar o cálculo.</span>
         <input id="h-${i}" type="number" min="0" step="1" placeholder="Horas"></label></details>`;
@@ -658,8 +879,9 @@ function draft(){
   const settings={plan};SETTINGS.forEach(k=>settings[k]=$(k).value);
   return {lead:$("lead-name").value.trim(),levels:Object.assign({},level),rows:rows.map(r=>({pain:r.pain||"",svc:r.svc,cx:r.cx,hours:r.hours,impact:r.impact||3})),settings,rates:Object.assign({},rates)};
 }
+let LRN={calib:{}};
 function update(){
-  const d=draft(),q=computeLead(d);
+  const d=draft(),q=computeLead(d);LRN=learnData();
   // scoring
   const weak=[];let answered=0;
   CRITERIA.forEach(c=>{
@@ -679,7 +901,14 @@ function update(){
   // dores
   rows.forEach((r,i)=>{const c=$("calc-"+i);if(!c)return;const h=rowHours(r),w=h?Math.max(.5,Math.ceil(h/Math.max(num("cap"),1)*2)/2):0;
     $("auto-"+i).textContent=Math.round(baseH(r));
-    c.innerHTML=`<span>Esforço <b>${h}h</b></span><span>Prazo <b>${wk(w)}</b></span><span>Preço <b>${brl(q.r100(rowCost(r,rates)*q.factor))}</b></span>`;});
+    c.innerHTML=`<span>Esforço <b>${h}h</b></span><span>Prazo <b>${wk(w)}</b></span><span>Preço <b>${brl(q.r100(rowCost(r,rates)*q.factor))}</b></span>`;
+    const cal=$("cal-"+i),cb=LRN.calib[r.svc],suggested=cb?Math.round(baseH(r)*cb.ratio):0;
+    if(cb&&Math.abs(cb.ratio-1)>=.1&&r.hours!==suggested){
+      const dlt=Math.round((cb.ratio-1)*100);cal.hidden=false;
+      cal.innerHTML=`<span>Em ${plural(cb.n,"projeto real","projetos reais")}, ${esc(svc(r.svc).n.toLowerCase())} levou <b>${dlt>0?"+":""}${dlt}%</b> de horas.</span><button type="button">Usar ${suggested}h</button>`;
+      cal.querySelector("button").onclick=()=>{r.hours=suggested;$("h-"+i).value=suggested;update();toast("Horas ajustadas com base nos projetos reais.");};
+    } else cal.hidden=true;});
+  editorInsights(d);
   // proposta
   $("k-total").textContent=brl(q.total);
   $("k-pay").textContent=q.total?`Entrada ${brl(q.entry)} + ${q.inst}x ${brl(q.each)}`:"Adicione dores no passo 3";
